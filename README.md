@@ -88,5 +88,5 @@ Cada nota de estudo é publicada em diferentes formatos, para atender a usos var
 </p>
 
 <p align="center">
-  <b>Jupyter é um laboratório vivo de ensino e prática de ciência — integrado, auditável, reprodutível, interativo e colaborativo.</b>
+  <b>Jupyter é um laboratório vivo de ensino e de prática de ciência — livre, aberto, integrado, integrador, transparente, auditável, reprodutível, interativo e colaborativo.</b>
 </p>
