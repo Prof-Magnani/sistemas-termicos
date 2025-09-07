@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.33">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Nota de Estudo — Revisão de Newton-Raphson</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="ne-revisao-newton-raphson_files/libs/clipboard/clipboard.min.js"></script>
+<script src="ne-revisao-newton-raphson_files/libs/quarto-html/quarto.js" type="module"></script>
+<script src="ne-revisao-newton-raphson_files/libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="ne-revisao-newton-raphson_files/libs/quarto-html/popper.min.js"></script>
+<script src="ne-revisao-newton-raphson_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="ne-revisao-newton-raphson_files/libs/quarto-html/anchor.min.js"></script>
+<link href="ne-revisao-newton-raphson_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="ne-revisao-newton-raphson_files/libs/quarto-html/quarto-syntax-highlighting-ea385d0e468b0dd5ea5bf0780b1290d9.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="ne-revisao-newton-raphson_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="ne-revisao-newton-raphson_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="ne-revisao-newton-raphson_files/libs/bootstrap/bootstrap-bb462d781dde1847d9e3ccf7736099dd.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="quarto-light">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+<div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="ne-revisao-newton-raphson.html"><i class="bi bi-file-pdf"></i>PDF</a></li><li><a href="ne-revisao-newton-raphson.html"><i class="bi bi-file-slides"></i>RevealJS</a></li></ul></div></div>
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Nota de Estudo — Revisão de Newton-Raphson</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="nota-de-estudo-revisão-de-newton-raphson" class="level1">
+<h1>Nota de Estudo — Revisão de Newton-Raphson</h1>
+<blockquote class="blockquote">
+<p><strong>Autor:</strong> Fábio Magnani (fabio.magnani@ufpe.br)<br>
+<strong>Curso:</strong> Engenharia Mecânica - UFPE<br>
+<strong>Início do desenvolvimento:</strong> 31/08/2025<br>
+<strong>Primeira publicação:</strong> 08/09/2025<br>
+<strong>Versão Atual:</strong> v-2025-09-08-a (fase de teste técnico no Colab, teste didático-pedagógico com estudantes e início da revisão final de código/texto)</p>
+</blockquote>
+<hr>
+<section id="objetivo" class="level2">
+<h2 class="anchored" data-anchor-id="objetivo">Objetivo</h2>
+<p>Revisar o Método de Newton-Raphson usando como exemplo um problema de trocador de calor de <em>Design of Thermal Systems</em>.</p>
+</section>
+<section id="referência" class="level2">
+<h2 class="anchored" data-anchor-id="referência">Referência</h2>
+<ul>
+<li>Stoecker, W. F. <em>Design of Thermal Systems</em>, chap.&nbsp;5, 3rd ed., McGraw-Hill, 1989.</li>
+</ul>
+</section>
+<section id="estrutura" class="level2">
+<h2 class="anchored" data-anchor-id="estrutura">Estrutura</h2>
+<ul>
+<li>Enunciado do problema-exemplo (trocador de calor com condensação) e o seu modelo matemático.</li>
+<li>Análise de escala do problema-exemplo.</li>
+<li>Estudo paramétrico do problema-exemplo (<span class="math inline">\(U\)</span> variável).</li>
+<li>Estudo paramétrico do problema-exemplo simplificado (<span class="math inline">\(U\)</span> constante).</li>
+<li>Revisão do método de Newton-Raphson.</li>
+<li>Solução do problema-exemplo pelo método de Newton-Raphson.</li>
+<li>Discussões finais.</li>
+<li>Propostas de estudos adicionais.</li>
+</ul>
+</section>
+<section id="notação" class="level2">
+<h2 class="anchored" data-anchor-id="notação">Notação</h2>
+<ul>
+<li><span class="math inline">\(w\)</span>: vazão mássica [kg/s]<br>
+</li>
+<li><span class="math inline">\(Q\)</span>: potência térmica requerida [kW]<br>
+</li>
+<li><span class="math inline">\(f(w)\)</span>: função resíduo usada no método de Newton-Raphson [kW]<br>
+</li>
+<li><span class="math inline">\(T_e\)</span>, <span class="math inline">\(T_v\)</span>: temperaturas de entrada da água e do vapor [°C]<br>
+</li>
+<li><span class="math inline">\(c_p\)</span>: calor específico a pressão constante [kJ/(kg·K)]<br>
+</li>
+<li><span class="math inline">\(A\)</span>: área efetiva de troca térmica [m^2]<br>
+</li>
+<li><span class="math inline">\(h\)</span>: passo para a diferença finita à frente</li>
+</ul>
+</section>
+<section id="problema-exemplo-cálculo-da-vazão-w-de-um-trocador-de-calor-com-condensação-para-garantir-a-taxa-de-transferência-de-calor-desejada" class="level2">
+<h2 class="anchored" data-anchor-id="problema-exemplo-cálculo-da-vazão-w-de-um-trocador-de-calor-com-condensação-para-garantir-a-taxa-de-transferência-de-calor-desejada">Problema-exemplo: cálculo da vazão <span class="math inline">\(w\)</span> de um trocador de calor com condensação para garantir a taxa de transferência de calor desejada</h2>
+<p><strong>Enunciado físico</strong>: O trocador da Fig. 1 aquece água a partir da condensação de vapor. A água entra a <span class="math inline">\(T_e=30^\circ\mathrm{C}\)</span>, o vapor entra a <span class="math inline">\(T_v=50^\circ\mathrm{C}\)</span>, e o condensado sai também a <span class="math inline">\(50^\circ\mathrm{C}\)</span>. Queremos determinar a vazão mássica de água, <span class="math inline">\(w\)</span> (kg/s), tal que o calor transferido seja <span class="math inline">\(Q=50\,\mathrm{kW}\)</span>. A área de troca é <span class="math inline">\(A=1{,}4\,\mathrm{m^2}\)</span> e o coeficiente global de transferência de calor, baseado nessa área, é função de <span class="math inline">\(w\)</span>:</p>
+<p><span class="math display">\[
+\frac{1}{U}=\frac{0{,}0445}{w^{0{,}8}}+0{,}185 \qquad [\mathrm{m^2\,K/kW}].
+\]</span></p>
+<figure style="margin: 0 0 1.25rem 0; text-align:center;" class="figure">
+<img src="../figures/ne-newton-raphson-fig-01.png" alt="Trocador de Calor de Fluxo em Contra-Corrente" width="480" style="display:block; margin:0 auto; max-width:100%;" class="figure-img">
+<figcaption>
+<b>Figura 1.</b> Problema-exemplo: trocador de calor com condensação de vapor.
+</figcaption>
+</figure>
+<p>Pela 1a Lei aplicada ao lado frio, temos que:</p>
+<p><span class="math display">\[
+Q = w c_p (T_s - T_e) \tag{2}
+\]</span></p>
+<p>A <strong>Equação do Trocador de Calor</strong> é:</p>
+<p><span class="math display">\[
+Q = U A \Delta T_{LM}
+= U A \frac{(T_v-T_s)-(T_v-T_e)}{\ln{\frac{(T_v-T_s)}{(T_v-T_e)}}}
+= U A \frac{(T_e-T_s)}{\ln{\frac{(T_v-T_s)}{(T_v-T_e)}}}    \tag{3}
+\]</span></p>
+<p>Comparando Eq.2 e Eq.3 vemos que:</p>
+<p><span class="math display">\[
+w c_p (T_s - T_e) = - U A  \frac{(T_s-T_e)}{\ln{\frac{(T_v-T_s)}{(T_v-T_e)}}}  
+\implies   \frac{(T_v-T_s)}{(T_v-T_e)} = e^{-\frac{U A}{w c_p}}
+\implies   (T_v-T_s) = (T_v-T_e) e^{-\frac{U A}{w c_p}}   \tag{4}
+\]</span></p>
+<p>Ou:</p>
+<p><span class="math display">\[
+(T_s-T_v) = - (T_v-T_e) e^{-\frac{U A}{w c_p}}  + (T_e-T_e)
+\implies  T_s = T_e + (T_v-T_e)  - (T_v-T_e) e^{-\frac{U A}{w c_p}}    \tag{5}
+\]</span></p>
+<p>Que, finalmente, se transforma da <strong>Equação do Trocador de Calor com Condensação</strong> (<em>i.e.,</em> o lado quente opera com temperatura constante):</p>
+<p><span class="math display">\[
+T_s = T_e + (T_v - T_e) \left(1 - e^{-UA/ w c_p}\right)  \tag{6}
+\]</span></p>
+<p>Substituindo a Eq. 6 na Eq.2, temos:</p>
+<p><span class="math display">\[
+Q  = w c_p (T_v - T_e) \left(1 - e^{-UA/ w c_p}\right)  \tag{7}
+\]</span></p>
+<p>Reescrevendo a Eq.1:</p>
+<p><span class="math display">\[
+U  = \frac{w}{0,0445 w^{0,2} +0,185 w}  \tag{8}
+\]</span></p>
+<p>Substituindo a Eq.8 na Eq.7, chegamos no <strong>modelo matemático</strong> do problema-exemplo:</p>
+<p><span class="math display">\[
+\boxed {Q  = w c_p (T_v - T_e) \left[ 1 - e^{-\frac{A}{ c_p \left( 0,0445 w^{0,2} + 0,185 w \right) } } \right] }   \tag{9}
+\]</span></p>
+<p><strong>Enunciado matemático</strong>: determine o valor de <span class="math inline">\(w\)</span> que satisfaça a Eq.9 para os valores de <span class="math inline">\(Q=50\)</span> kW; <span class="math inline">\(A=1,4 \text{m}^2\)</span>; <span class="math inline">\(c_p=4,2\)</span> kJ/kg<span class="math inline">\(\cdot\)</span>K; <span class="math inline">\(T_v = 50^\circ\mathrm{C}\)</span> e <span class="math inline">\(T_e = 30^\circ\mathrm{C}\)</span>.</p>
+</section>
+<section id="análise-de-escala-do-modelo-matemático" class="level2">
+<h2 class="anchored" data-anchor-id="análise-de-escala-do-modelo-matemático">Análise de escala do modelo matemático</h2>
+<p>Para facilitar a análise, podemos escrever a Eq.9 assim: <span class="math display">\[
+Q(w)= w\,c_p\,\Delta T\,[\,1-e^{-\xi}\,] \tag{10}
+\]</span></p>
+<p>Com:<br>
+<span class="math display">\[
+\Delta T=(T_v-T_e) \tag{11}
+\]</span></p>
+<p>e</p>
+<p><span class="math display">\[
+\xi(w)=\dfrac{A}{c_p\,(\,0{,}0445\,w^{0{,}2}+0{,}185\,w\,)} \tag{12}
+\]</span></p>
+<section id="limite-assintótico-quando-a-vazão-tende-a-zero" class="level3">
+<h3 class="anchored" data-anchor-id="limite-assintótico-quando-a-vazão-tende-a-zero">Limite assintótico quando a vazão tende a zero</h3>
+<p>Quando a vazão tende a zero (<span class="math inline">\(w\to 0\)</span>), vemos que <span class="math inline">\(\xi\to\infty\)</span> e, consequentemente, <span class="math inline">\((1-e^{-\xi})\to 1\)</span>. Temos, então, que:</p>
+<p><span class="math display">\[
+     w\to 0  \implies Q \to 0 \tag{13}
+\]</span></p>
+<p>O que não nos ajuda muito. Vamos ver então o que acontece com a derivada de <span class="math inline">\(Q\)</span>. Derivando a Eq. 10 em relação a <span class="math inline">\(w\)</span>, alcançamos:</p>
+<p><span class="math display">\[
+Q'(w)=c_p\Delta T(1-e^{-\xi})-\Delta T A e^{-\xi}\frac{0,0089 w^{0,2}+0,185 w}{(0,0445 w^{0,2}+0,185 w)^2} \tag{14}
+\]</span></p>
+<p>Portanto, como o segundo termo envolve uma exponencial multiplicada por uma potência, e como a exponencial domina a potência, temos que o segundo termo tende a zero. Em outras palavras:</p>
+<p><span class="math display">\[
+     w\to 0  \implies Q' \to c_p\Delta T \tag{15}
+\]</span></p>
+<p>Em outras palavras, quando a vazão é muito baixa, o calor é proporcional à vazão (<span class="math inline">\(Q\propto w\)</span>). Logo, para uma primeira estimativa, linearizando a curva (usando <span class="math inline">\(w \approx \dfrac{Q}{c_p\,\Delta T}\)</span>), podemos propor que a vazão para o fluxo <span class="math inline">\(Q=50\)</span> kW pode ser estimada por <span class="math inline">\(w = 50/(4,2 \cdot 20) = 0,595\)</span> kg/s.</p>
+</section>
+<section id="limite-assintótico-quando-a-vazão-tende-ao-infinito" class="level3">
+<h3 class="anchored" data-anchor-id="limite-assintótico-quando-a-vazão-tende-ao-infinito">Limite assintótico quando a vazão tende ao infinito</h3>
+<p>Quando a vazão tende ao infinito (<span class="math inline">\(w\to \infty\)</span>), temos que <span class="math inline">\(w\,c_p\,\Delta T \to \infty\)</span> ao mesmo tempo que <span class="math inline">\((1-e^{-\xi})\to 0\)</span>, e, por isso, precisamos de uma análise um pouco mais profunda. Primeiro, vemos que, quando a vazão cresce muito (<span class="math inline">\(w\to \infty\)</span>), quem controla <span class="math inline">\(\xi\)</span> é o termo <span class="math inline">\(0,185 w\)</span>. Então:</p>
+<p><span class="math display">\[
+w\to\infty \;\Rightarrow\; \xi(w)\approx \dfrac{A}{0{,}185\,c_p}\,\dfrac{1}{w}  \tag{16}
+\]</span></p>
+<p>Lembrando que a Série de Taylor é dada por:</p>
+<p><span class="math display">\[
+  y(x)= y(a) + y'(a)(x-a) +  \sum_{k=2}^{\infty}\frac{y^{(k)}(a)}{k!}\,(x-a)^k  \tag{17}
+\]</span></p>
+<p>E aplicando-a ao termo (<span class="math inline">\(1-e^{-\xi}\)</span>), expandindo em torno de <span class="math inline">\(\xi=0\)</span>, obtemos:</p>
+<p><span class="math display">\[
+  1-e^{-\xi}=\xi-\tfrac{\xi^2}{2}+O(\xi^3)\sim \xi  \tag{18}
+\]</span></p>
+<p>Logo:</p>
+<p><span class="math display">\[
+w\to \infty \implies Q\to  w c_p \Delta T  \frac{A}{0,185 w c_p} \implies  Q = \frac {A }{0,185} \Delta T    \tag{19}
+\]</span></p>
+<p>Então, quando a vazão cresce muito, podemos prever que a taxa de transferência de calor, <span class="math inline">\(Q\)</span>, tende ao valor de <span class="math inline">\(\frac{1,4}{ 0,185} 20 = 151,4\)</span> kW.</p>
+</section>
+</section>
+<section id="estudo-paramétrico-1-influência-de-w-em-u-t_s-e-q-considerando-u-variável" class="level2">
+<h2 class="anchored" data-anchor-id="estudo-paramétrico-1-influência-de-w-em-u-t_s-e-q-considerando-u-variável">Estudo Paramétrico 1 — influência de <span class="math inline">\(w\)</span> em <span class="math inline">\(U\)</span>, <span class="math inline">\(T_s\)</span> e <span class="math inline">\(Q\)</span>, considerando <span class="math inline">\(U\)</span> variável</h2>
+<p>Vamos agora analisar numericamente como <span class="math inline">\(U\)</span> (Eq.8), <span class="math inline">\(T_s\)</span> (Eq.6) e <span class="math inline">\(Q\)</span> (Eq. 7) se comportam em função de <span class="math inline">\(w\)</span>.</p>
+<div id="cell-6" class="cell" data-execution_count="2">
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="ne-revisao-newton-raphson_files/figure-html/cell-2-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="ne-revisao-newton-raphson_files/figure-html/cell-2-output-2.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="ne-revisao-newton-raphson_files/figure-html/cell-2-output-3.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<figure style="margin: 0 0 1.25rem 0; text-align:center;" class="figure">
+<figcaption>
+<b>Figura 2.</b> Comportamento de <span class="math inline">\(U\)</span>, <span class="math inline">\(T_s\)</span> e <span class="math inline">\(Q\)</span> em função de <span class="math inline">\(w\)</span>, considerando <span class="math inline">\(U(w)\)</span>.
+</figcaption>
+</figure>
+<p>Os gráficos da Fig.2 são apresentados em duas colunas; a da esquerda com <span class="math inline">\(w\)</span> variando em uma faixa maior [0 a 50], para enfatizar a assíntota para valores mais altos de <span class="math inline">\(w\)</span> e também a forma total da curva; e a coluna da direita mostrando apenas a faixa mais próxima da raiz [0 a 3], o que nos permite tanto ver a raiz da equação (<span class="math inline">\(w \approx 0,7\)</span>) quanto a assíntota para baixos valores de vazão.</p>
+<section id="comportamento-de-uw" class="level3">
+<h3 class="anchored" data-anchor-id="comportamento-de-uw">Comportamento de <span class="math inline">\(U(w)\)</span></h3>
+<ul>
+<li>Quando <span class="math inline">\(w\to 0\)</span>, vimos que o termo em <span class="math inline">\(w^{0{,}2}\)</span> domina o denominador da Eq.8. Logo, <span class="math inline">\(U(w)\sim \dfrac{1}{0{,}0445}\,w^{0{,}8}\)</span> (<em>i.e.</em>, <span class="math inline">\(U(w)\)</span> cresce com lei de potência).<br>
+</li>
+<li>Para <span class="math inline">\(w\to\infty\)</span>, quem domina o denominador é o termo em <span class="math inline">\(w\)</span>. Então, <span class="math inline">\(U(w)\to \dfrac{1}{0{,}185}\approx 5{,}405\,\mathrm{kW/(m^2\,K)}\)</span> (<em>i.e.</em>, <span class="math inline">\(U(w)\)</span> tende a um platô).<br>
+Nas figuras 2(a<span class="math inline">\(_{i}\)</span>) e 2(a<span class="math inline">\(_{ii}\)</span>), esses dois comportamentos aparecem claramente, primeiro como o crescimento rápido em baixas vazões, e depois com a saturação para altas vazões.</li>
+</ul>
+</section>
+<section id="assíntotas-de-qw-sobrepostas-ao-gráfico" class="level3">
+<h3 class="anchored" data-anchor-id="assíntotas-de-qw-sobrepostas-ao-gráfico">Assíntotas de <span class="math inline">\(Q(w)\)</span> sobrepostas ao gráfico</h3>
+<ul>
+<li>Quando <span class="math inline">\(w\to 0\)</span>, <span class="math inline">\(Q(w)\approx c_p\,\Delta T\,w\)</span>. Com os dados que temos, <span class="math inline">\(c_p\,\Delta T=4{,}2\times 20=84\,\mathrm{kW/(kg/s)}\)</span>.<br>
+A curva de <span class="math inline">\(Q\)</span> coincide com essa reta muito perto de <span class="math inline">\(w=0\)</span>.</li>
+<li>Quando <span class="math inline">\(w\to\infty\)</span>, <span class="math inline">\(Q(w)\to Q_{\max}\)</span>, com <span class="math inline">\(Q_{\max}=\dfrac{A}{0{,}185}\,\Delta T=\dfrac{1{,}4}{0{,}185}\times 20\approx 151{,}35\,\mathrm{kW}\)</span>. No gráfico, essa é a linha horizontal que a curva de <span class="math inline">\(Q\)</span> se aproxima por baixo.<br>
+Nas figuras 2(b<span class="math inline">\(_{i}\)</span>) e 2(b<span class="math inline">\(_{ii}\)</span>), vemos como essas duas assíntotas explicam a curva geral de <span class="math inline">\(Q(w)\)</span>, <em>i.e.</em>, crescimento quase linear no começo e saturação no fim.</li>
+</ul>
+</section>
+<section id="raiz-provável-para-q50mathrmkw-em-wapprox-07" class="level3">
+<h3 class="anchored" data-anchor-id="raiz-provável-para-q50mathrmkw-em-wapprox-07">Raiz provável para <span class="math inline">\(Q=50\,\mathrm{kW}\)</span> em <span class="math inline">\(w\approx 0{,}7\)</span></h3>
+<ul>
+<li>Como <span class="math inline">\(50\,\mathrm{kW}\ll Q_{\max}\approx 151{,}35\,\mathrm{kW}\)</span>, a solução está bem antes da saturação.<br>
+</li>
+<li>Visualmente, a interseção <span class="math inline">\(Q(w)=50\)</span> ocorre em <span class="math inline">\(w\approx 0{,}7\,\mathrm{kg/s}\)</span>, coerente com a aproximação linear <span class="math inline">\(w\approx Q/(c_p\Delta T)=50/84\approx 0{,}595\)</span> e com a solução numérica que veremos mais abaixo (<span class="math inline">\(w\approx 0{,}693\)</span>).<br>
+</li>
+<li>Interpretação: ainda estamos no regime quase linear (<span class="math inline">\(Q\propto w\)</span>), então controlar <span class="math inline">\(Q\)</span> via <span class="math inline">\(w\)</span> é eficiente nesse ponto.</li>
+</ul>
+</section>
+<section id="temperatura-de-saída-t_sw" class="level3">
+<h3 class="anchored" data-anchor-id="temperatura-de-saída-t_sw">Temperatura de saída <span class="math inline">\(T_s(w)\)</span></h3>
+<ul>
+<li>Para <span class="math inline">\(w\)</span> pequeno: <span class="math inline">\(\xi\)</span> grande, <span class="math inline">\(1-\exp(-\xi)\to 1\)</span> <span class="math inline">\(\Rightarrow T_s\approx T_v=50^\circ\mathrm{C}\)</span> (a água quase atinge o vapor).<br>
+</li>
+<li>Para <span class="math inline">\(w\)</span> grande: <span class="math inline">\(\xi\)</span> pequeno, <span class="math inline">\(1-\exp(-\xi)\sim \xi\propto 1/w\)</span> <span class="math inline">\(\Rightarrow T_s\to T_e=30^\circ\mathrm{C}\)</span> (tempo de residência curto).</li>
+</ul>
+</section>
+<section id="leitura-de-projeto" class="level3">
+<h3 class="anchored" data-anchor-id="leitura-de-projeto">Leitura de projeto</h3>
+<ul>
+<li>As assíntotas dão duas informações chaves sem cálculo: inclinação inicial <span class="math inline">\(84\,\mathrm{kW/(kg/s)}\)</span> e capacidade máxima <span class="math inline">\(\approx 151{,}35\,\mathrm{kW}\)</span>.<br>
+</li>
+<li>O ponto de operação desejado (<span class="math inline">\(50\,\mathrm{kW}\)</span>) fica muito abaixo do platô, com solução única e boa sensibilidade a <span class="math inline">\(w\)</span>.<br>
+</li>
+<li>Se, no futuro, o alvo se aproximar do platô, aumentar <span class="math inline">\(w\)</span> trará ganhos marginais; seria mais efetivo atuar em <span class="math inline">\(A\)</span> ou em <span class="math inline">\(\Delta T\)</span>.</li>
+</ul>
+</section>
+</section>
+<section id="estudo-paramétrico-2-influência-de-w-em-t_s-e-q-considerando-u-constante." class="level2">
+<h2 class="anchored" data-anchor-id="estudo-paramétrico-2-influência-de-w-em-t_s-e-q-considerando-u-constante.">Estudo Paramétrico 2 — influência de <span class="math inline">\(w\)</span> em <span class="math inline">\(T_s\)</span> e <span class="math inline">\(Q\)</span>, considerando <span class="math inline">\(U\)</span> constante.</h2>
+<p>Neste estudo, faremos algo muito parecido com o estudo anterior. No entanto, vamos considerar <span class="math inline">\(U\)</span> constante (avaliado em <span class="math inline">\(w=0,7\)</span>. Nosso objetivo é compreender os efeitos que <span class="math inline">\(U\)</span> variável tem sobre o comportamento do trocador de calor.</p>
+<div id="cell-10" class="cell" data-execution_count="3">
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="ne-revisao-newton-raphson_files/figure-html/cell-3-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="ne-revisao-newton-raphson_files/figure-html/cell-3-output-2.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>U(0.7) = 4.095096 kW/(m^2·K)</code></pre>
+</div>
+</div>
+<figure style="margin: 0 0 1.25rem 0; text-align:center;" class="figure">
+<figcaption>
+<b>Figura 3.</b> Comportamento de <span class="math inline">\(T_s\)</span> e <span class="math inline">\(Q\)</span> em função de <span class="math inline">\(w\)</span>, considerando <span class="math inline">\(U\)</span> constante.
+</figcaption>
+</figure>
+</section>
+<section id="estudo-paramétrico-2-comparação-u_w07-constante-vs.-uw-variável" class="level2">
+<h2 class="anchored" data-anchor-id="estudo-paramétrico-2-comparação-u_w07-constante-vs.-uw-variável">Estudo Paramétrico 2 — comparação <span class="math inline">\(U_{w=0,7}\)</span> (constante) vs.&nbsp;<span class="math inline">\(U(w)\)</span> (variável)</h2>
+<p>Os resultados seguem o esperado. Com o coeficiente global de transferência de calor fixo em <span class="math inline">\(U_{w=0,7}\)</span>, o modelo: - Superestima <span class="math inline">\(Q\)</span> e <span class="math inline">\(T_s\)</span> para <span class="math inline">\(w&lt;0{,}7\)</span>, pois o <span class="math inline">\(U(w)\)</span> real é menor nessa faixa. - Subestima <span class="math inline">\(Q\)</span> e <span class="math inline">\(T_s\)</span> para <span class="math inline">\(w&gt;0{,}7\)</span>, pois o <span class="math inline">\(U(w)\)</span> real cresce em direção ao platô <span class="math inline">\(1/0{,}185\)</span>.</p>
+<p>Comparando ao modelo com <span class="math inline">\(U(w)\)</span>, o erro próximo de <span class="math inline">\(w\approx 0{,}7\)</span> é pequeno. Se considerarmos toda a faixa de operação, o erro em <span class="math inline">\(T_s\)</span> atinge cerca de <span class="math inline">\(\sim5\%\)</span>, enquanto o erro em <span class="math inline">\(Q\)</span> pode chegar a <span class="math inline">\(\sim30\%\)</span> em vazões altas; evidenciando a importância de usarmos <span class="math inline">\(U(w)\)</span> variavel se quisermos fazer análises globais.</p>
+<p><strong>Conclusão prática.</strong> Usar <span class="math inline">\(U\)</span> constante é razoável para estudarmos o comportamento do trocador em torno do ponto onde <span class="math inline">\(U\)</span> foi obtido. Já para investigar toda a faixa de vazão (ou operar longe de <span class="math inline">\(w\approx 0{,}7\)</span>), o erro pode se tornar significativo; nesse caso, vamos preferir o modelo completo com <span class="math inline">\(U(w)\)</span>.</p>
+</section>
+<section id="cálculo-do-valor-de-w-que-satisfaz-a-condição-q50-kw." class="level2">
+<h2 class="anchored" data-anchor-id="cálculo-do-valor-de-w-que-satisfaz-a-condição-q50-kw.">Cálculo do valor de <span class="math inline">\(w\)</span> que satisfaz a condição <span class="math inline">\(Q=50\)</span> kW.</h2>
+<p>Agora que já analisamos o comportamento analítico e paramétrico da Equação do Trocador de Calor com Condensação (Eq.9), vamos voltar ao problema inicial, que é determinar o valor de <span class="math inline">\(w\)</span> que satisfaça a condição de <span class="math inline">\(Q=50\)</span> kW. Observando a Eq.9, percebemos que ela é implícita em <span class="math inline">\(w\)</span>, quer dizer, não conseguimos isolar <span class="math inline">\(w\)</span> de um lado da equação para podermos calcular o seu valor. A alternativa, então, é resolver essa equação por um método numérico.</p>
+<p>Vamos escolher aqui o método de Newton-Raphson, por ser de rápida convergência, elegância analítica e simplicidade computacional; características que o tornaram o mais utilizado método para obtenção de raízes de equações.</p>
+</section>
+<section id="método-de-newtonraphson" class="level2">
+<h2 class="anchored" data-anchor-id="método-de-newtonraphson">Método de Newton–Raphson</h2>
+<p>Primeiro, vamos criar a função <span class="math inline">\(f(w)\)</span> a partir da Eq.9:</p>
+<p><span class="math display">\[
+f(w) = Q  - w c_p (T_v - T_e) \left[ 1 - e^{-\frac{A}{ c_p \left( 0,0445 w^{0,2} + 0,185 w \right) } } \right]  \tag{20}
+\]</span></p>
+<p>Desta forma, o <strong>problema matemático</strong> pode ser enunciado como: encontre o valor de <span class="math inline">\(w\)</span> que leva <span class="math inline">\(f(w)\)</span> a zero.</p>
+<p><span class="math display">\[
+f(w)   = 0  \tag{21}
+\]</span></p>
+<section id="dedução-geométrica-do-método-de-newton-raphson" class="level3">
+<h3 class="anchored" data-anchor-id="dedução-geométrica-do-método-de-newton-raphson">Dedução geométrica do método de Newton-Raphson</h3>
+<p>Vamos supor que estamos procurando a raiz de:</p>
+<p><span class="math display">\[
+  y(x) = 0  \tag{22}
+\]</span></p>
+<p>E digamos que podemos avaliar o valor da função <span class="math inline">\(y(x)\)</span> e sua derivada <span class="math inline">\(y'(x)\)</span> para qualquer valor de <span class="math inline">\(x\)</span>. Uma alternativa seria percorrer todos os valores de <span class="math inline">\(x\)</span> até encontrar o local onde <span class="math inline">\(y(x)=0\)</span>. Esse método é conhecido como <strong>Busca Exaustiva</strong>. O problema com ele é a demora para encontrar a outra solução. Existem outros métodos já vistos nos cursos de <em>Cálculo Numérico</em>, como o <em>Método da Bisseção</em>.</p>
+<p>No método de <em>Newton-Raphson</em>, a pessoa começa a procura por um determinado valor inicial <span class="math inline">\(x_1\)</span> (esse valor em geral é arbitrado conhecendo a física do problema. No ponto <span class="math inline">\(x_1\)</span>, avaliamos <span class="math inline">\(y(x_1)\)</span> e <span class="math inline">\(y'(x_1)\)</span>. Nesse momento, fazemos a <strong>aproximação</strong> de que a função <span class="math inline">\(y(x)\)</span> é uma reta (ver a Fig.2), e então encontramos o valor de <span class="math inline">\(x_2\)</span> que faria com que <span class="math inline">\(y_2\)</span> fosse zero: <span class="math display">\[  
+y'(x_1) = \left. \frac{dy}{dx}\right)_{x_1} = \frac{y(x_2)-y(x_1)}{x_2-x_1} = \frac{0-y(x_1)}{x_2-x_1}  \tag{23}
+\]</span></p>
+<p>O que implica em:</p>
+<p><span class="math display">\[
+x_2 = x_1 - \frac{y(x_1)}{y'(x_1)}  \tag{24}
+\]</span></p>
+<figure style="margin: 0 0 1.25rem 0; text-align:center;" class="figure">
+<img src="../figures/ne-newton-raphson-fig-02.png" alt="Esquema do método de newton raphson - primeiro passo" width="540" style="display:block; margin:0 auto; max-width:100%;" class="figure-img">
+<figcaption>
+<b>Figura 2.</b> Esquema do método de Newton-Raphson (primeiro passo).
+</figcaption>
+</figure>
+<p>Mas logo percebemos que <span class="math inline">\(x_2\)</span> não é a raiz de <span class="math inline">\(y(x)\)</span>, porque a curva não é uma reta (simplificação que fizemos para chegar à Eq.24) . No entanto, se tivermos escolhido um bom <strong>valor inicial</strong>, estaremos mais próximos da raiz. Fazemos então a mesma coisa no ponto 2, <em>i.e.</em>, avaliamos <span class="math inline">\(y(x_2)\)</span> e <span class="math inline">\(y'(x_2)\)</span>, traçamos uma reta e rumamos para o ponto 3 (como pode ser visto na Fig 3):</p>
+<p><span class="math display">\[
+x_3 = x_2 - \frac{y(x_2)}{y'(x_2)}  \tag{24}
+\]</span></p>
+<figure style="margin: 0 0 1.25rem 0; text-align:center;" class="figure">
+<img src="../figures/ne-newton-raphson-fig-03.png" alt="Esquema do método de newton raphson - próximos passos" width="320" style="display:block; margin:0 auto; max-width:100%;" class="figure-img">
+<figcaption>
+<b>Figura 3.</b> Esquema do método de Newton-Raphson (próximos passos).
+</figcaption>
+</figure>
+<p>Generalizando, o <strong>Método de Newton-Raphson</strong> é um processo iterativo que segue a seguinte relação até chegarmos o mais próximo o desejado da raiz:</p>
+<p><span class="math display">\[
+x_{k+1} = x_{k} - \frac{y(x_k)}{y'(x_k)}  \tag{24}
+\]</span></p>
+<p>O Método de Newton-Raphson é bastante poderoso. Quando ele converge para a raiz, ele converge rapidamente. Quando ele diverge, há algumas estratégias (<em>i.e.</em>, limitar os valores possíveis de <span class="math inline">\(x\)</span>), mas vamos focar na mais simples e usual, que é iniciar com um valor inicial diferente.</p>
+</section>
+</section>
+<section id="derivada-numérica" class="level2">
+<h2 class="anchored" data-anchor-id="derivada-numérica">Derivada numérica</h2>
+<p>Vemos na Eq.24 que é necessário calcular o valor da derivada. Isso pode ser feito de duas formas: derivada analítica, quando possível e fácil, ou então a partir de alguma aproximação numérica. A aproximação numérica mais comum é pelo método das diferenças finitas à frente, na qual aproximamos a derivada por diferenças simples:</p>
+<p><span class="math display">\[
+    y'(x) = \frac{dy}{dx} = \lim_{h \to 0} \frac{y(x+h) - y(x)}{h} \approx  \frac{y(x+h) - y(x)}{h}  \tag{25}
+\]</span></p>
+<section id="derivada-analítica" class="level3">
+<h3 class="anchored" data-anchor-id="derivada-analítica">Derivada analítica</h3>
+<p>Outra alternativa é calcular a derivada analítica. Para o problema exemplo deste <em>notebook</em>, temos que:</p>
+<p>Sendo:</p>
+<p><span class="math display">\[
+f(w)=Q-w c_p \Delta T \left[ 1- e^{\xi} \right] \tag{26}
+\]</span></p>
+<p>onde:</p>
+<p><span class="math display">\[
+\xi(w)=-\dfrac{A}{c_p\,[\,a\,w^{0.2}+b\,w\,]} \tag{27}
+\]</span></p>
+<p>com <span class="math inline">\(a=0,0445\)</span> e <span class="math inline">\(b=0,185\)</span>; e com:</p>
+<p><span class="math display">\[
+\Delta T=(T_v-T_e) \tag{28}
+\]</span></p>
+<p>Então:</p>
+<p><span class="math display">\[
+f'(w)=-c_p \Delta T \left[ 1 - e^{\xi}-w e^{\xi} \xi'(w) \right]
+\]</span></p>
+<p>Com:</p>
+<p><span class="math display">\[
+\xi'(w)=\frac{A (0.2 a w^{-0.8}+b)}{c_p \left[ a w^{0.2}+b w \right]^2}
+\]</span></p>
+<p>Essa expressão serve como referência para comparar com a versão numérica. Vamos agora encontrar a raiz da Eq.24 por Newton-Raphson, usando a derivada numérica (por diferenças finitas à frente) e a derivada analítica.</p>
+<div id="cell-18" class="cell" data-execution_count="4">
+<div class="cell-output cell-output-stdout">
+<pre><code>Newton (dif. finitas): w = 0.691871 kg/s, f(w) = -7.105427e-15 kW
+Newton (derivada analitica): w = 0.691871 kg/s, f(w) = -7.105427e-15 kW
+f'(w≈0.691871): df=-5.368351e+01, analitica=-5.368356e+01, erro_rel=8.153e-07</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="ne-revisao-newton-raphson_files/figure-html/cell-4-output-2.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="ne-revisao-newton-raphson_files/figure-html/cell-4-output-3.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<figure style="margin: 0 0 1.25rem 0; text-align:center;" class="figure">
+<figcaption>
+<b>Figura 4.</b> Convergência de <span class="math inline">\(f(w)\)</span> e <span class="math inline">\(w\)</span> para cada iteração de Newton-Raphson.
+</figcaption>
+</figure>
+</section>
+</section>
+<section id="discussão-dos-aspectos-numéricos" class="level2">
+<h2 class="anchored" data-anchor-id="discussão-dos-aspectos-numéricos">Discussão dos Aspectos Numéricos</h2>
+<section id="comportamento-de-newtonraphson-neste-problema" class="level3">
+<h3 class="anchored" data-anchor-id="comportamento-de-newtonraphson-neste-problema">Comportamento de Newton–Raphson neste problema</h3>
+<p>Com o palpite simples <span class="math display">\[
+w_0 \approx \frac{Q}{c_p\,\Delta T},
+\]</span> as iterações convergiram de forma rápida e estável para a raiz <span class="math inline">\(w^*\)</span>. Observou-se queda acentuada de <span class="math inline">\(|f(w_k)|\)</span> a cada passo e sequência <span class="math inline">\(w_k\)</span> rapidamente estabilizada. A suavidade de <span class="math display">\[
+f(w)=Q-w\,c_p\,\Delta T\,[1-\exp(\xi(w))],\qquad
+\xi(w)=-\frac{A}{c_p\,(a\,w^{0.2}+b\,w)},
+\]</span> no domínio visitado favoreceu esse comportamento.</p>
+</section>
+<section id="diferença-entre-as-duas-derivadas-neste-problema" class="level3">
+<h3 class="anchored" data-anchor-id="diferença-entre-as-duas-derivadas-neste-problema">Diferença entre as duas derivadas neste problema</h3>
+<p>A derivada analítica, <span class="math display">\[
+f'(w)=-c_p\,\Delta T\,[1-\exp(\xi)-w\,\exp(\xi)\,\xi'(w)],\qquad
+\xi'(w)=\frac{A\,(0.2\,a\,w^{-0.8}+b)}{c_p\,[a\,w^{0.2}+b\,w]^2},
+\]</span> e a aproximação por diferença finita à frente, <span class="math display">\[
+f'(w)\approx\frac{f(w+h)-f(w)}{h},
+\]</span> levaram ao mesmo <span class="math inline">\(w^*\)</span> e com número de iterações muito parecido. Aqui isso acontece porque <span class="math inline">\(f\)</span> é suave e o passo <span class="math inline">\(h\)</span> foi estável.</p>
+</section>
+<section id="comportamento-de-newtonraphson-em-geral" class="level3">
+<h3 class="anchored" data-anchor-id="comportamento-de-newtonraphson-em-geral">Comportamento de Newton–Raphson em geral</h3>
+<p>Newton–Raphson é muito rápido <strong>quando</strong> há bom palpite, <span class="math inline">\(f\)</span> e <span class="math inline">\(f'\)</span> são regulares perto da raiz e a direção de passo é confiável. Fora dessas condições, pode oscilar, divergir ou sair do domínio, o que pode necessitar de técnicas adicionais mais robustas.</p>
+</section>
+<section id="diferença-entre-as-duas-derivadas-em-geral" class="level3">
+<h3 class="anchored" data-anchor-id="diferença-entre-as-duas-derivadas-em-geral">Diferença entre as duas derivadas em geral</h3>
+<p>A derivada analítica reduz iterações e evita a sensibilidade à escolha de <span class="math inline">\(h\)</span>; vale especialmente quando se busca tolerâncias finas ou quando avaliar <span class="math inline">\(f\)</span> é caro. A diferença finita é universal e simples, mas equilibra erro de truncamento e arredondamento via <span class="math inline">\(h\)</span> e pode reduzir a ordem efetiva de convergência.</p>
+<blockquote class="blockquote">
+<p><strong>Resumo final:</strong> quando disponível, use <span class="math inline">\(f'(w)\)</span> analítica; quando não, diferença finita bem escolhida resolve. Primeiro faça funcionar, depois refine.</p>
+</blockquote>
+</section>
+</section>
+<section id="discussão-final" class="level2">
+<h2 class="anchored" data-anchor-id="discussão-final">Discussão Final</h2>
+<p>Nesta <em>nota de estudo</em>, nós revisamos o <strong>Método de Newton-Raphson</strong> usando como exemplo um trocador de calor com condensação coeficiente global de transferência de calor (<span class="math inline">\(U\)</span>) variando com a vazão (<span class="math inline">\(w\)</span>). Seguimos os seguintes passos:</p>
+<ol type="1">
+<li>Construção do modelo matemático</li>
+<li>Análise de assíntotas do modelo matemático nos limites de <span class="math inline">\(w\)</span><br>
+</li>
+<li>Análise paramétrica de como várias grandezas (<em>i.e.</em>, <span class="math inline">\(U\)</span>, <span class="math inline">\(T_s\)</span> e <span class="math inline">\(Q\)</span>) variam com o aumento da vazão<br>
+</li>
+<li>Estudo da influência da variação de <span class="math inline">\(U\)</span> com <span class="math inline">\(w\)</span> em relação a um modelo com <span class="math inline">\(U\)</span> constante<br>
+</li>
+<li>Revisão do Método de Newton Raphson<br>
+</li>
+<li>Cálculo numérico da derivada que usando a aproximação das diferenças finitas à frente<br>
+</li>
+<li>Cálculo analítico da derivada que aparece em Newton-Raphson<br>
+</li>
+<li>Análise do resultado obtido por Newton-Raphon</li>
+</ol>
+<p>Desta forma, aproveitamos um exemplo real para revisar a construção de um modelo matemático, o estudo de suas assíntotas e do seu comportamento em função dos parâmetros, e finalmente encontramos a solução do problema utilizando um famoso método numérico.</p>
+</section>
+<section id="novos-exercícios-práticos" class="level2">
+<h2 class="anchored" data-anchor-id="novos-exercícios-práticos">Novos Exercícios Práticos</h2>
+<ul>
+<li>Estimar <span class="math inline">\(U(w)\)</span> com correlações empíricas<br>
+</li>
+<li>Estudar a influência de <span class="math inline">\(A\)</span>, <span class="math inline">\(\Delta T\)</span> e <span class="math inline">\(c_p\)</span> no comportamento do trocador de calor.</li>
+<li>Experimente outros valores iniciais de <span class="math inline">\(w\)</span> para estudar a convergência de Newton-Raphson.</li>
+<li>Procure na literatura científica dados experimentais de <em>U(w)</em>, ajuste os dados por mínimos quadrados e refaça este estudo.</li>
+<li>Estime a perda de carga no trocador em função de <span class="math inline">\(w\)</span> e estime os custos de bombeamento para cada condição.</li>
+<li>Faça uma propagação de incertezas dos parâmetros para <span class="math inline">\(W\)</span> e para a raiz de <em>f(W)</em>.</li>
+<li>Implemente outros métodos e compare com o Newton-Raphson que vimos nesta <em>nota de estudo</em>
+<ul>
+<li>Clássicos (<em>e.g.</em>, Bisseção, Busca Exaustiva).<br>
+</li>
+<li>Newton-Raphson e variações (<em>e.g.</em>, Secante, Newton Amortecido, Newton <em>Safeguarded</em>).</li>
+<li>Alternativos (<em>e.g.</em>, Ponto Fixo, <em>Regula Falsi</em>, Brent)<br>
+</li>
+</ul></li>
+<li>Pesquise outros métodos de obtenção de raizes de funções.</li>
+</ul>
+</section>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

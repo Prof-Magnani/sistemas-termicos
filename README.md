@@ -55,7 +55,8 @@ Ao final, o(a) estudante deverá ser capaz de:
 
 ---
 
-## Notas de estudos (Colab)
+## Notas de Estudos
 
-- **Revisão de Perda de Carga** —  [`notebooks/ne-revisao-perda-carga.ipynb`](https://colab.research.google.com/github/Prof-Magnani/sistemas-termicos/blob/main/notebooks/ne-revisao-perda-carga.ipynb)
-
+- **Revisão de Perda de Carga** —  [[Colab](https://colab.research.google.com/github/Prof-Magnani/sistemas-termicos/blob/main/notebooks/ne-revisao-perda-carga.ipynb)], [[html](./html/ne-revisao-perda-carga.html)], [[pdf](./pdf/ne-revisao-perda-carga.pdf)], [[reveal.js](./slides/ne-revisao-perda-carga-slides.html)], [[ppt](./slides/ne-revisao-perda-carga-slides.ppt)] 
+- **Revisão de Newton-Raphson** —  [[Colab](https://colab.research.google.com/github/Prof-Magnani/sistemas-termicos/blob/main/notebooks/ne-revisao-newton-raphson.ipynb)], [[html](./html/ne-revisao-newton-raphson.html)], [[pdf](./pdf/ne-revisao-newton-raphson.pdf)], [[reveal.js](./slides/ne-revisao-newton-raphson-slides.html)], [[ppt](./slides/ne-revisao-newton-raphson-slides.ppt)]
+- **Revisão de Trocadores de Calor** —  [[Colab](https://colab.research.google.com/github/Prof-Magnani/sistemas-termicos/blob/main/notebooks/ne-revisao-trocador-calor.ipynb)], [[html](./html/ne-revisao-trocador-calor.html)], [[pdf](./pdf/ne-revisao-newton-raphson.pdf)], [[reveal.js](./slides/ne-revisao-trocador-calor-slides.html)], [[ppt](./slides/ne-revisao-trocador-calor-slides.ppt)]

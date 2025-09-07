@@ -1,0 +1,1237 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<script src="ne-revisao-newton-raphson_files/libs/clipboard/clipboard.min.js"></script>
+<script src="ne-revisao-newton-raphson_files/libs/quarto-html/tabby.min.js"></script>
+<script src="ne-revisao-newton-raphson_files/libs/quarto-html/popper.min.js"></script>
+<script src="ne-revisao-newton-raphson_files/libs/quarto-html/tippy.umd.min.js"></script>
+<link href="ne-revisao-newton-raphson_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="ne-revisao-newton-raphson_files/libs/quarto-html/light-border.css" rel="stylesheet">
+<link href="ne-revisao-newton-raphson_files/libs/quarto-html/quarto-syntax-highlighting-ea385d0e468b0dd5ea5bf0780b1290d9.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.7.33">
+
+  <title>Nota de Estudo — Revisão de Newton-Raphson</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="ne-revisao-newton-raphson_files/libs/revealjs/dist/reset.css">
+  <link rel="stylesheet" href="ne-revisao-newton-raphson_files/libs/revealjs/dist/reveal.css">
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+      vertical-align: middle;
+    }
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      { color: #003b4f; background-color: #f1f3f5; }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span { color: #003b4f; } /* Normal */
+    code span.al { color: #ad0000; } /* Alert */
+    code span.an { color: #5e5e5e; } /* Annotation */
+    code span.at { color: #657422; } /* Attribute */
+    code span.bn { color: #ad0000; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #003b4f; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #20794d; } /* Char */
+    code span.cn { color: #8f5902; } /* Constant */
+    code span.co { color: #5e5e5e; } /* Comment */
+    code span.cv { color: #5e5e5e; font-style: italic; } /* CommentVar */
+    code span.do { color: #5e5e5e; font-style: italic; } /* Documentation */
+    code span.dt { color: #ad0000; } /* DataType */
+    code span.dv { color: #ad0000; } /* DecVal */
+    code span.er { color: #ad0000; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #ad0000; } /* Float */
+    code span.fu { color: #4758ab; } /* Function */
+    code span.im { color: #00769e; } /* Import */
+    code span.in { color: #5e5e5e; } /* Information */
+    code span.kw { color: #003b4f; font-weight: bold; } /* Keyword */
+    code span.op { color: #5e5e5e; } /* Operator */
+    code span.ot { color: #003b4f; } /* Other */
+    code span.pp { color: #ad0000; } /* Preprocessor */
+    code span.sc { color: #5e5e5e; } /* SpecialChar */
+    code span.ss { color: #20794d; } /* SpecialString */
+    code span.st { color: #20794d; } /* String */
+    code span.va { color: #111111; } /* Variable */
+    code span.vs { color: #20794d; } /* VerbatimString */
+    code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="ne-revisao-newton-raphson_files/libs/revealjs/dist/theme/quarto-ee9ab3830bbe7759b42dda8416faf5cd.css">
+  <link rel="stylesheet" href="slides.css">
+  <link href="ne-revisao-newton-raphson_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
+  <link href="ne-revisao-newton-raphson_files/libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
+  <link href="ne-revisao-newton-raphson_files/libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
+  <link href="ne-revisao-newton-raphson_files/libs/revealjs/plugin/quarto-support/footer.css" rel="stylesheet">
+  <style type="text/css">
+    .reveal div.sourceCode {
+      margin: 0;
+      overflow: auto;
+    }
+    .reveal div.hanging-indent {
+      margin-left: 1em;
+      text-indent: -1em;
+    }
+    .reveal .slide:not(.center) {
+      height: 100%;
+      overflow-y: auto;
+    }
+    .reveal .slide.scrollable {
+      overflow-y: auto;
+    }
+    .reveal .footnotes {
+      height: 100%;
+      overflow-y: auto;
+    }
+    .reveal .slide .absolute {
+      position: absolute;
+      display: block;
+    }
+    .reveal .footnotes ol {
+      counter-reset: ol;
+      list-style-type: none; 
+      margin-left: 0;
+    }
+    .reveal .footnotes ol li:before {
+      counter-increment: ol;
+      content: counter(ol) ". "; 
+    }
+    .reveal .footnotes ol li > p:first-child {
+      display: inline-block;
+    }
+    .reveal .slide ul,
+    .reveal .slide ol {
+      margin-bottom: 0.5em;
+    }
+    .reveal .slide ul li,
+    .reveal .slide ol li {
+      margin-top: 0.4em;
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide ul[role="tablist"] li {
+      margin-bottom: 0;
+    }
+    .reveal .slide ul li > *:first-child,
+    .reveal .slide ol li > *:first-child {
+      margin-block-start: 0;
+    }
+    .reveal .slide ul li > *:last-child,
+    .reveal .slide ol li > *:last-child {
+      margin-block-end: 0;
+    }
+    .reveal .slide .columns:nth-child(3) {
+      margin-block-start: 0.8em;
+    }
+    .reveal blockquote {
+      box-shadow: none;
+    }
+    .reveal .tippy-content>* {
+      margin-top: 0.2em;
+      margin-bottom: 0.7em;
+    }
+    .reveal .tippy-content>*:last-child {
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide > img.stretch.quarto-figure-center,
+    .reveal .slide > img.r-stretch.quarto-figure-center {
+      display: block;
+      margin-left: auto;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-left,
+    .reveal .slide > img.r-stretch.quarto-figure-left  {
+      display: block;
+      margin-left: 0;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-right,
+    .reveal .slide > img.r-stretch.quarto-figure-right  {
+      display: block;
+      margin-left: auto;
+      margin-right: 0; 
+    }
+  </style>
+</head>
+<body class="quarto-light">
+  <div class="reveal">
+    <div class="slides">
+
+<section id="title-slide" class="quarto-title-block center">
+  <h1 class="title">Nota de Estudo — Revisão de Newton-Raphson</h1>
+
+<div class="quarto-title-authors">
+</div>
+
+</section>
+<section>
+<section id="nota-de-estudo-revisão-de-newton-raphson" class="title-slide slide level1 center">
+<h1>Nota de Estudo — Revisão de Newton-Raphson</h1>
+<blockquote>
+<p><strong>Autor:</strong> Fábio Magnani (fabio.magnani@ufpe.br)<br>
+<strong>Curso:</strong> Engenharia Mecânica - UFPE<br>
+<strong>Início do desenvolvimento:</strong> 31/08/2025<br>
+<strong>Primeira publicação:</strong> 08/09/2025<br>
+<strong>Versão Atual:</strong> v-2025-09-08-a (fase de teste técnico no Colab, teste didático-pedagógico com estudantes e início da revisão final de código/texto)</p>
+</blockquote>
+</section>
+<section id="objetivo" class="slide level2">
+<h2>Objetivo</h2>
+<p>Revisar o Método de Newton-Raphson usando como exemplo um problema de trocador de calor de <em>Design of Thermal Systems</em>.</p>
+</section>
+<section id="referência" class="slide level2">
+<h2>Referência</h2>
+<ul>
+<li>Stoecker, W. F. <em>Design of Thermal Systems</em>, chap.&nbsp;5, 3rd ed., McGraw-Hill, 1989.</li>
+</ul>
+</section>
+<section id="estrutura" class="slide level2">
+<h2>Estrutura</h2>
+<ul>
+<li>Enunciado do problema-exemplo (trocador de calor com condensação) e o seu modelo matemático.</li>
+<li>Análise de escala do problema-exemplo.</li>
+<li>Estudo paramétrico do problema-exemplo (<span class="math inline">\(U\)</span> variável).</li>
+<li>Estudo paramétrico do problema-exemplo simplificado (<span class="math inline">\(U\)</span> constante).</li>
+<li>Revisão do método de Newton-Raphson.</li>
+<li>Solução do problema-exemplo pelo método de Newton-Raphson.</li>
+<li>Discussões finais.</li>
+<li>Propostas de estudos adicionais.</li>
+</ul>
+</section>
+<section id="problema-exemplo" class="slide level2">
+<h2>Problema-exemplo</h2>
+<p><strong>Enunciado físico</strong>: O trocador da Fig. 1 aquece água a partir da condensação de vapor. A água entra a <span class="math inline">\(T_e=30^\circ\mathrm{C}\)</span>, o vapor entra a <span class="math inline">\(T_v=50^\circ\mathrm{C}\)</span>, e o condensado sai também a <span class="math inline">\(50^\circ\mathrm{C}\)</span>. Queremos determinar a vazão mássica de água, <span class="math inline">\(w\)</span> (kg/s), tal que o calor transferido seja <span class="math inline">\(Q=50\,\mathrm{kW}\)</span>. A área de troca é <span class="math inline">\(A=1{,}4\,\mathrm{m^2}\)</span> e o coeficiente global de transferência de calor, baseado nessa área, é função de <span class="math inline">\(w\)</span>:</p>
+<p><span class="math display">\[
+\frac{1}{U}=\frac{0{,}0445}{w^{0{,}8}}+0{,}185 \qquad [\mathrm{m^2\,K/kW}].
+\]</span></p>
+<figure style="margin: 0 0 1.25rem 0; text-align:center;">
+<img src="../figures/ne-newton-raphson-fig-01.png" alt="Trocador de Calor de Fluxo em Contra-Corrente" width="480" style="display:block; margin:0 auto; max-width:100%;">
+<figcaption>
+<b>Figura 1.</b> Problema-exemplo: trocador de calor com condensação de vapor.
+</figcaption>
+</figure>
+<p>Pela 1a Lei aplicada ao lado frio, temos que:</p>
+<p><span class="math display">\[
+Q = w c_p (T_s - T_e) \tag{2}
+\]</span></p>
+<p>A <strong>Equação do Trocador de Calor</strong> é:</p>
+<p><span class="math display">\[
+Q = U A \Delta T_{LM}
+= U A \frac{(T_v-T_s)-(T_v-T_e)}{\ln{\frac{(T_v-T_s)}{(T_v-T_e)}}}
+= U A \frac{(T_e-T_s)}{\ln{\frac{(T_v-T_s)}{(T_v-T_e)}}}    \tag{3}
+\]</span></p>
+<p>Comparando Eq.2 e Eq.3 vemos que:</p>
+<p><span class="math display">\[
+w c_p (T_s - T_e) = - U A  \frac{(T_s-T_e)}{\ln{\frac{(T_v-T_s)}{(T_v-T_e)}}}  
+\implies   \frac{(T_v-T_s)}{(T_v-T_e)} = e^{-\frac{U A}{w c_p}}
+\implies   (T_v-T_s) = (T_v-T_e) e^{-\frac{U A}{w c_p}}   \tag{4}
+\]</span></p>
+<p>Ou:</p>
+<p><span class="math display">\[
+(T_s-T_v) = - (T_v-T_e) e^{-\frac{U A}{w c_p}}  + (T_e-T_e)
+\implies  T_s = T_e + (T_v-T_e)  - (T_v-T_e) e^{-\frac{U A}{w c_p}}    \tag{5}
+\]</span></p>
+<p>Que, finalmente, se transforma da <strong>Equação do Trocador de Calor com Condensação</strong> (<em>i.e.,</em> o lado quente opera com temperatura constante):</p>
+<p><span class="math display">\[
+T_s = T_e + (T_v - T_e) \left(1 - e^{-UA/ w c_p}\right)  \tag{6}
+\]</span></p>
+<p>Substituindo a Eq. 6 na Eq.2, temos:</p>
+<p><span class="math display">\[
+Q  = w c_p (T_v - T_e) \left(1 - e^{-UA/ w c_p}\right)  \tag{7}
+\]</span></p>
+<p>Reescrevendo a Eq.1:</p>
+<p><span class="math display">\[
+U  = \frac{w}{0,0445 w^{0,2} +0,185 w}  \tag{8}
+\]</span></p>
+<p>Substituindo a Eq.8 na Eq.7, chegamos no <strong>modelo matemático</strong> do problema-exemplo:</p>
+<p><span class="math display">\[
+\boxed {Q  = w c_p (T_v - T_e) \left[ 1 - e^{-\frac{A}{ c_p \left( 0,0445 w^{0,2} + 0,185 w \right) } } \right] }   \tag{9}
+\]</span></p>
+<p><strong>Enunciado matemático</strong>: determine o valor de <span class="math inline">\(w\)</span> que satisfaça a Eq.9 para os valores de <span class="math inline">\(Q=50\)</span> kW; <span class="math inline">\(A=1,4 \text{m}^2\)</span>; <span class="math inline">\(c_p=4,2\)</span> kJ/kg<span class="math inline">\(\cdot\)</span>K; <span class="math inline">\(T_v = 50^\circ\mathrm{C}\)</span> e <span class="math inline">\(T_e = 30^\circ\mathrm{C}\)</span>.</p>
+</section>
+<section id="análise-de-escala-do-modelo-matemático" class="slide level2">
+<h2>Análise de escala do modelo matemático</h2>
+<p>Para facilitar a análise, podemos escrever a Eq.9 assim: <span class="math display">\[
+Q(w)= w\,c_p\,\Delta T\,[\,1-e^{-\xi}\,] \tag{10}
+\]</span></p>
+<p>Com:<br>
+<span class="math display">\[
+\Delta T=(T_v-T_e) \tag{11}
+\]</span></p>
+<p>e</p>
+<p><span class="math display">\[
+\xi(w)=\dfrac{A}{c_p\,(\,0{,}0445\,w^{0{,}2}+0{,}185\,w\,)} \tag{12}
+\]</span></p>
+<h3 id="limite-assintótico-quando-a-vazão-tende-a-zero">Limite assintótico quando a vazão tende a zero</h3>
+<p>Quando a vazão tende a zero (<span class="math inline">\(w\to 0\)</span>), vemos que <span class="math inline">\(\xi\to\infty\)</span> e, consequentemente, <span class="math inline">\((1-e^{-\xi})\to 1\)</span>. Temos, então, que:</p>
+<p><span class="math display">\[
+     w\to 0  \implies Q \to 0 \tag{13}
+\]</span></p>
+<p>O que não nos ajuda muito. Vamos ver então o que acontece com a derivada de <span class="math inline">\(Q\)</span>. Derivando a Eq. 10 em relação a <span class="math inline">\(w\)</span>, alcançamos:</p>
+<p><span class="math display">\[
+Q'(w)=c_p\Delta T(1-e^{-\xi})-\Delta T A e^{-\xi}\frac{0,0089 w^{0,2}+0,185 w}{(0,0445 w^{0,2}+0,185 w)^2} \tag{14}
+\]</span></p>
+<p>Portanto, como o segundo termo envolve uma exponencial multiplicada por uma potência, e como a exponencial domina a potência, temos que o segundo termo tende a zero. Em outras palavras:</p>
+<p><span class="math display">\[
+     w\to 0  \implies Q' \to c_p\Delta T \tag{15}
+\]</span></p>
+<p>Em outras palavras, quando a vazão é muito baixa, o calor é proporcional à vazão (<span class="math inline">\(Q\propto w\)</span>). Logo, para uma primeira estimativa, linearizando a curva (usando <span class="math inline">\(w \approx \dfrac{Q}{c_p\,\Delta T}\)</span>), podemos propor que a vazão para o fluxo <span class="math inline">\(Q=50\)</span> kW pode ser estimada por <span class="math inline">\(w = 50/(4,2 \cdot 20) = 0,595\)</span> kg/s.</p>
+<h3 id="limite-assintótico-quando-a-vazão-tende-ao-infinito">Limite assintótico quando a vazão tende ao infinito</h3>
+<p>Quando a vazão tende ao infinito (<span class="math inline">\(w\to \infty\)</span>), temos que <span class="math inline">\(w\,c_p\,\Delta T \to \infty\)</span> ao mesmo tempo que <span class="math inline">\((1-e^{-\xi})\to 0\)</span>, e, por isso, precisamos de uma análise um pouco mais profunda. Primeiro, vemos que, quando a vazão cresce muito (<span class="math inline">\(w\to \infty\)</span>), quem controla <span class="math inline">\(\xi\)</span> é o termo <span class="math inline">\(0,185 w\)</span>. Então:</p>
+<p><span class="math display">\[
+w\to\infty \;\Rightarrow\; \xi(w)\approx \dfrac{A}{0{,}185\,c_p}\,\dfrac{1}{w}  \tag{16}
+\]</span></p>
+<p>Lembrando que a Série de Taylor é dada por:</p>
+<p><span class="math display">\[
+  y(x)= y(a) + y'(a)(x-a) +  \sum_{k=2}^{\infty}\frac{y^{(k)}(a)}{k!}\,(x-a)^k  \tag{17}
+\]</span></p>
+<p>E aplicando-a ao termo (<span class="math inline">\(1-e^{-\xi}\)</span>), expandindo em torno de <span class="math inline">\(\xi=0\)</span>, obtemos:</p>
+<p><span class="math display">\[
+  1-e^{-\xi}=\xi-\tfrac{\xi^2}{2}+O(\xi^3)\sim \xi  \tag{18}
+\]</span></p>
+<p>Logo:</p>
+<p><span class="math display">\[
+w\to \infty \implies Q\to  w c_p \Delta T  \frac{A}{0,185 w c_p} \implies  Q = \frac {A }{0,185} \Delta T    \tag{19}
+\]</span></p>
+<p>Então, quando a vazão cresce muito, podemos prever que a taxa de transferência de calor, <span class="math inline">\(Q\)</span>, tende ao valor de <span class="math inline">\(\frac{1,4}{ 0,185} 20 = 151,4\)</span> kW.</p>
+</section>
+<section id="estudo-paramétrico-1-influência-de-w-em-u-t_s-e-q-considerando-u-variável" class="slide level2">
+<h2>Estudo Paramétrico 1 — influência de <span class="math inline">\(w\)</span> em <span class="math inline">\(U\)</span>, <span class="math inline">\(T_s\)</span> e <span class="math inline">\(Q\)</span>, considerando <span class="math inline">\(U\)</span> variável</h2>
+<p>Vamos agora analisar numericamente como <span class="math inline">\(U\)</span> (Eq.8), <span class="math inline">\(T_s\)</span> (Eq.6) e <span class="math inline">\(Q\)</span> (Eq. 7) se comportam em função de <span class="math inline">\(w\)</span>.</p>
+<div id="cell-6" class="cell" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href=""></a></span>
+<span id="cb1-2"><a href=""></a><span class="co"># --- Estudo Paramétrico 1: U = U(w) e assíntotas — P&amp;B, sem títulos, só eixos, COM setas e (a)…(f) centrados ---</span></span>
+<span id="cb1-3"><a href=""></a></span>
+<span id="cb1-4"><a href=""></a></span>
+<span id="cb1-5"><a href=""></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-6"><a href=""></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb1-7"><a href=""></a><span class="im">from</span> cycler <span class="im">import</span> cycler</span>
+<span id="cb1-8"><a href=""></a></span>
+<span id="cb1-9"><a href=""></a><span class="co"># ===== estilo global (P&amp;B, sem grid, traços distintos) =====</span></span>
+<span id="cb1-10"><a href=""></a>plt.rcParams[<span class="st">'axes.grid'</span>] <span class="op">=</span> <span class="va">False</span></span>
+<span id="cb1-11"><a href=""></a>plt.rcParams[<span class="st">'axes.prop_cycle'</span>] <span class="op">=</span> (</span>
+<span id="cb1-12"><a href=""></a>    cycler(<span class="st">'color'</span>, [<span class="st">'k'</span>]) <span class="op">*</span> cycler(<span class="st">'linestyle'</span>, [<span class="st">'-'</span>, <span class="st">'--'</span>, <span class="st">'-.'</span>, <span class="st">':'</span>])</span>
+<span id="cb1-13"><a href=""></a>)</span>
+<span id="cb1-14"><a href=""></a>plt.rcParams[<span class="st">'lines.linewidth'</span>] <span class="op">=</span> <span class="fl">1.6</span></span>
+<span id="cb1-15"><a href=""></a>plt.rcParams[<span class="st">'legend.fontsize'</span>] <span class="op">=</span> <span class="dv">8</span></span>
+<span id="cb1-16"><a href=""></a>plt.rcParams[<span class="st">'legend.frameon'</span>] <span class="op">=</span> <span class="va">False</span></span>
+<span id="cb1-17"><a href=""></a></span>
+<span id="cb1-18"><a href=""></a><span class="kw">def</span> axes_minimal_with_arrows(ax):</span>
+<span id="cb1-19"><a href=""></a>    <span class="co">"""Mostra só eixos esquerdo e inferior e desenha setas nas extremidades."""</span></span>
+<span id="cb1-20"><a href=""></a>    <span class="cf">for</span> side <span class="kw">in</span> (<span class="st">'top'</span>, <span class="st">'right'</span>):</span>
+<span id="cb1-21"><a href=""></a>        ax.spines[side].set_visible(<span class="va">False</span>)</span>
+<span id="cb1-22"><a href=""></a>    ax.spines[<span class="st">'left'</span>].set_visible(<span class="va">True</span>)</span>
+<span id="cb1-23"><a href=""></a>    ax.spines[<span class="st">'bottom'</span>].set_visible(<span class="va">True</span>)</span>
+<span id="cb1-24"><a href=""></a>    ax.yaxis.set_ticks_position(<span class="st">'left'</span>)</span>
+<span id="cb1-25"><a href=""></a>    ax.xaxis.set_ticks_position(<span class="st">'bottom'</span>)</span>
+<span id="cb1-26"><a href=""></a>    <span class="co"># setas nos eixos (coordenadas do eixo: 0..1)</span></span>
+<span id="cb1-27"><a href=""></a>    ax.annotate(<span class="st">''</span>, xy<span class="op">=</span>(<span class="fl">1.02</span>, <span class="fl">0.0</span>), xytext<span class="op">=</span>(<span class="op">-</span><span class="fl">0.02</span>, <span class="fl">0.0</span>),</span>
+<span id="cb1-28"><a href=""></a>                xycoords<span class="op">=</span><span class="st">'axes fraction'</span>,</span>
+<span id="cb1-29"><a href=""></a>                arrowprops<span class="op">=</span><span class="bu">dict</span>(arrowstyle<span class="op">=</span><span class="st">'-&gt;'</span>, lw<span class="op">=</span><span class="fl">1.0</span>, shrinkA<span class="op">=</span><span class="dv">0</span>, shrinkB<span class="op">=</span><span class="dv">0</span>))</span>
+<span id="cb1-30"><a href=""></a>    ax.annotate(<span class="st">''</span>, xy<span class="op">=</span>(<span class="fl">0.0</span>, <span class="fl">1.02</span>), xytext<span class="op">=</span>(<span class="fl">0.0</span>, <span class="op">-</span><span class="fl">0.02</span>),</span>
+<span id="cb1-31"><a href=""></a>                xycoords<span class="op">=</span><span class="st">'axes fraction'</span>,</span>
+<span id="cb1-32"><a href=""></a>                arrowprops<span class="op">=</span><span class="bu">dict</span>(arrowstyle<span class="op">=</span><span class="st">'-&gt;'</span>, lw<span class="op">=</span><span class="fl">1.0</span>, shrinkA<span class="op">=</span><span class="dv">0</span>, shrinkB<span class="op">=</span><span class="dv">0</span>))</span>
+<span id="cb1-33"><a href=""></a></span>
+<span id="cb1-34"><a href=""></a><span class="kw">def</span> panel_label_center(ax, label, y_offset<span class="op">=-</span><span class="fl">0.22</span>):</span>
+<span id="cb1-35"><a href=""></a>    <span class="co">"""Rótulo (a), (b), … centralizado sob cada subplot."""</span></span>
+<span id="cb1-36"><a href=""></a>    ax.text(<span class="fl">0.5</span>, y_offset, label, transform<span class="op">=</span>ax.transAxes,</span>
+<span id="cb1-37"><a href=""></a>            ha<span class="op">=</span><span class="st">'center'</span>, va<span class="op">=</span><span class="st">'top'</span>, fontsize<span class="op">=</span><span class="dv">10</span>)</span>
+<span id="cb1-38"><a href=""></a></span>
+<span id="cb1-39"><a href=""></a><span class="co"># Parâmetros</span></span>
+<span id="cb1-40"><a href=""></a>Q_target <span class="op">=</span> <span class="fl">50.0</span>  <span class="co"># kW (alvo)</span></span>
+<span id="cb1-41"><a href=""></a>Te <span class="op">=</span> <span class="fl">30.0</span>        <span class="co"># °C</span></span>
+<span id="cb1-42"><a href=""></a>Tv <span class="op">=</span> <span class="fl">50.0</span>        <span class="co"># °C</span></span>
+<span id="cb1-43"><a href=""></a>cp <span class="op">=</span> <span class="fl">4.2</span>         <span class="co"># kJ/kgK</span></span>
+<span id="cb1-44"><a href=""></a>A  <span class="op">=</span> <span class="fl">1.4</span>         <span class="co"># m²</span></span>
+<span id="cb1-45"><a href=""></a>a <span class="op">=</span> <span class="fl">0.0445</span></span>
+<span id="cb1-46"><a href=""></a>b <span class="op">=</span> <span class="fl">0.185</span></span>
+<span id="cb1-47"><a href=""></a>dT <span class="op">=</span> Tv <span class="op">-</span> Te</span>
+<span id="cb1-48"><a href=""></a></span>
+<span id="cb1-49"><a href=""></a><span class="co"># Funções com U(w)</span></span>
+<span id="cb1-50"><a href=""></a><span class="kw">def</span> U_func(w):</span>
+<span id="cb1-51"><a href=""></a>    <span class="cf">return</span> w <span class="op">/</span> (a<span class="op">*</span>w<span class="op">**</span><span class="fl">0.2</span> <span class="op">+</span> b<span class="op">*</span>w)</span>
+<span id="cb1-52"><a href=""></a></span>
+<span id="cb1-53"><a href=""></a><span class="kw">def</span> Q_func(w):</span>
+<span id="cb1-54"><a href=""></a>    <span class="cf">return</span> w<span class="op">*</span>cp<span class="op">*</span>dT<span class="op">*</span>(<span class="dv">1</span> <span class="op">-</span> np.exp(<span class="op">-</span>(A<span class="op">/</span>(cp<span class="op">*</span>(a<span class="op">*</span>w<span class="op">**</span><span class="fl">0.2</span> <span class="op">+</span> b<span class="op">*</span>w)))))</span>
+<span id="cb1-55"><a href=""></a></span>
+<span id="cb1-56"><a href=""></a><span class="kw">def</span> Ts_func(w):</span>
+<span id="cb1-57"><a href=""></a>    <span class="cf">return</span> Te <span class="op">+</span> dT<span class="op">*</span>(<span class="dv">1</span> <span class="op">-</span> np.exp(<span class="op">-</span>(A<span class="op">/</span>(cp<span class="op">*</span>(a<span class="op">*</span>w<span class="op">**</span><span class="fl">0.2</span> <span class="op">+</span> b<span class="op">*</span>w)))))</span>
+<span id="cb1-58"><a href=""></a></span>
+<span id="cb1-59"><a href=""></a><span class="co"># Faixas de w</span></span>
+<span id="cb1-60"><a href=""></a>w1 <span class="op">=</span> np.linspace(<span class="fl">0.05</span>, <span class="fl">50.0</span>, <span class="dv">500</span>)   <span class="co"># ampla</span></span>
+<span id="cb1-61"><a href=""></a>w2 <span class="op">=</span> np.linspace(<span class="fl">0.05</span>, <span class="fl">3.0</span>,  <span class="dv">500</span>)   <span class="co"># zoom</span></span>
+<span id="cb1-62"><a href=""></a></span>
+<span id="cb1-63"><a href=""></a><span class="co"># Curvas com U(w)</span></span>
+<span id="cb1-64"><a href=""></a>U1, U2   <span class="op">=</span> U_func(w1),   U_func(w2)</span>
+<span id="cb1-65"><a href=""></a>Q1, Q2   <span class="op">=</span> Q_func(w1),   Q_func(w2)</span>
+<span id="cb1-66"><a href=""></a>Ts1, Ts2 <span class="op">=</span> Ts_func(w1),  Ts_func(w2)</span>
+<span id="cb1-67"><a href=""></a></span>
+<span id="cb1-68"><a href=""></a><span class="co"># Assíntotas</span></span>
+<span id="cb1-69"><a href=""></a>Qmax <span class="op">=</span> (A<span class="op">/</span><span class="fl">0.185</span>)<span class="op">*</span>dT          <span class="co"># platô para w -&gt; infinito</span></span>
+<span id="cb1-70"><a href=""></a>Qlin1 <span class="op">=</span> cp<span class="op">*</span>dT<span class="op">*</span>w1             <span class="co"># reta tangente em w=0</span></span>
+<span id="cb1-71"><a href=""></a>Qlin2 <span class="op">=</span> cp<span class="op">*</span>dT<span class="op">*</span>w2</span>
+<span id="cb1-72"><a href=""></a></span>
+<span id="cb1-73"><a href=""></a><span class="co"># --- U(w) ---</span></span>
+<span id="cb1-74"><a href=""></a>fig, axs <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">2</span>, figsize<span class="op">=</span>(<span class="dv">8</span>,<span class="dv">4</span>))</span>
+<span id="cb1-75"><a href=""></a>axs[<span class="dv">0</span>].plot(w1, U1)</span>
+<span id="cb1-76"><a href=""></a>axs[<span class="dv">0</span>].set_xlabel(<span class="vs">r'</span><span class="dv">$</span><span class="vs">w</span><span class="ch">\ </span><span class="pp">[</span><span class="dv">\m</span><span class="pp">athrm{kg/s}]</span><span class="dv">$</span><span class="vs">'</span>)</span>
+<span id="cb1-77"><a href=""></a>axs[<span class="dv">0</span>].set_ylabel(<span class="vs">r'</span><span class="dv">$</span><span class="vs">U</span><span class="ch">\ </span><span class="pp">[</span><span class="dv">\m</span><span class="pp">athrm{kW/(m^2</span><span class="ch">\,</span><span class="pp">K)}]</span><span class="dv">$</span><span class="vs">'</span>)</span>
+<span id="cb1-78"><a href=""></a>axes_minimal_with_arrows(axs[<span class="dv">0</span>])<span class="op">;</span> panel_label_center(axs[<span class="dv">0</span>], <span class="st">'(a$_</span><span class="sc">{i}</span><span class="st">$)'</span>)</span>
+<span id="cb1-79"><a href=""></a></span>
+<span id="cb1-80"><a href=""></a>axs[<span class="dv">1</span>].plot(w2, U2)</span>
+<span id="cb1-81"><a href=""></a>axs[<span class="dv">1</span>].set_xlabel(<span class="vs">r'</span><span class="dv">$</span><span class="vs">w</span><span class="ch">\ </span><span class="pp">[</span><span class="dv">\m</span><span class="pp">athrm{kg/s}]</span><span class="dv">$</span><span class="vs">'</span>)</span>
+<span id="cb1-82"><a href=""></a>axs[<span class="dv">1</span>].set_ylabel(<span class="vs">r'</span><span class="dv">$</span><span class="vs">U</span><span class="ch">\ </span><span class="pp">[</span><span class="dv">\m</span><span class="pp">athrm{kW/(m^2</span><span class="ch">\,</span><span class="pp">K)}]</span><span class="dv">$</span><span class="vs">'</span>)</span>
+<span id="cb1-83"><a href=""></a>axes_minimal_with_arrows(axs[<span class="dv">1</span>])<span class="op">;</span> panel_label_center(axs[<span class="dv">1</span>], <span class="st">'(a$_</span><span class="sc">{ii}</span><span class="st">$)'</span>)</span>
+<span id="cb1-84"><a href=""></a></span>
+<span id="cb1-85"><a href=""></a>plt.tight_layout()<span class="op">;</span> plt.show()</span>
+<span id="cb1-86"><a href=""></a></span>
+<span id="cb1-87"><a href=""></a><span class="co"># --- Ts(w) com U(w) ---</span></span>
+<span id="cb1-88"><a href=""></a>fig, axs <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">2</span>, figsize<span class="op">=</span>(<span class="dv">8</span>,<span class="dv">4</span>))</span>
+<span id="cb1-89"><a href=""></a>axs[<span class="dv">0</span>].plot(w1, Ts1)</span>
+<span id="cb1-90"><a href=""></a>axs[<span class="dv">0</span>].set_xlabel(<span class="vs">r'</span><span class="dv">$</span><span class="vs">w</span><span class="ch">\ </span><span class="pp">[</span><span class="dv">\m</span><span class="pp">athrm{kg/s}]</span><span class="dv">$</span><span class="vs">'</span>)</span>
+<span id="cb1-91"><a href=""></a>axs[<span class="dv">0</span>].set_ylabel(<span class="vs">r'</span><span class="dv">$</span><span class="vs">T_s</span><span class="ch">\ </span><span class="pp">[^</span><span class="er">\</span><span class="pp">circ</span><span class="dv">\m</span><span class="pp">athrm{C}]</span><span class="dv">$</span><span class="vs">'</span>)</span>
+<span id="cb1-92"><a href=""></a>axes_minimal_with_arrows(axs[<span class="dv">0</span>])<span class="op">;</span> panel_label_center(axs[<span class="dv">0</span>], <span class="st">'(b$_</span><span class="sc">{i}</span><span class="st">$)'</span>)</span>
+<span id="cb1-93"><a href=""></a></span>
+<span id="cb1-94"><a href=""></a>axs[<span class="dv">1</span>].plot(w2, Ts2)</span>
+<span id="cb1-95"><a href=""></a>axs[<span class="dv">1</span>].set_xlabel(<span class="vs">r'</span><span class="dv">$</span><span class="vs">w</span><span class="ch">\ </span><span class="pp">[</span><span class="dv">\m</span><span class="pp">athrm{kg/s}]</span><span class="dv">$</span><span class="vs">'</span>)</span>
+<span id="cb1-96"><a href=""></a>axs[<span class="dv">1</span>].set_ylabel(<span class="vs">r'</span><span class="dv">$</span><span class="vs">T_s</span><span class="ch">\ </span><span class="pp">[^</span><span class="er">\</span><span class="pp">circ</span><span class="dv">\m</span><span class="pp">athrm{C}]</span><span class="dv">$</span><span class="vs">'</span>)</span>
+<span id="cb1-97"><a href=""></a>axes_minimal_with_arrows(axs[<span class="dv">1</span>])<span class="op">;</span> panel_label_center(axs[<span class="dv">1</span>], <span class="st">'(b$_</span><span class="sc">{ii}</span><span class="st">$)'</span>)</span>
+<span id="cb1-98"><a href=""></a></span>
+<span id="cb1-99"><a href=""></a>plt.tight_layout()<span class="op">;</span> plt.show()</span>
+<span id="cb1-100"><a href=""></a></span>
+<span id="cb1-101"><a href=""></a><span class="co"># --- Q(w) com U(w) + assíntotas ---</span></span>
+<span id="cb1-102"><a href=""></a>fig, axs <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">2</span>, figsize<span class="op">=</span>(<span class="dv">8</span>,<span class="dv">4</span>))</span>
+<span id="cb1-103"><a href=""></a></span>
+<span id="cb1-104"><a href=""></a>axs[<span class="dv">0</span>].plot(w1, Q1, label<span class="op">=</span><span class="vs">r'</span><span class="dv">$</span><span class="vs">Q</span><span class="kw">(</span><span class="vs">w</span><span class="kw">)</span><span class="dv">$</span><span class="vs"> com </span><span class="dv">$</span><span class="vs">U</span><span class="kw">(</span><span class="vs">w</span><span class="kw">)</span><span class="dv">$</span><span class="vs">'</span>)</span>
+<span id="cb1-105"><a href=""></a>axs[<span class="dv">0</span>].plot(w1, Qlin1, linestyle<span class="op">=</span><span class="st">'--'</span>, label<span class="op">=</span><span class="vs">r'assíntota </span><span class="dv">$</span><span class="vs">w</span><span class="ch">\t</span><span class="vs">o0</span><span class="dv">$</span><span class="vs">: </span><span class="dv">$</span><span class="vs">Q</span><span class="ch">\a</span><span class="vs">pprox c_p</span><span class="dv">\D</span><span class="vs">elta T</span><span class="ch">\,</span><span class="vs">w</span><span class="dv">$</span><span class="vs">'</span>)</span>
+<span id="cb1-106"><a href=""></a>axs[<span class="dv">0</span>].axhline(Qmax, linestyle<span class="op">=</span><span class="st">':'</span>, label<span class="op">=</span><span class="vs">r'assíntota </span><span class="dv">$</span><span class="vs">w</span><span class="ch">\t</span><span class="vs">o</span><span class="er">\</span><span class="vs">infty</span><span class="dv">$</span><span class="vs">: </span><span class="dv">$</span><span class="vs">Q_{</span><span class="dv">\m</span><span class="vs">ax}</span><span class="dv">$</span><span class="vs">'</span>)</span>
+<span id="cb1-107"><a href=""></a>axs[<span class="dv">0</span>].axhline(Q_target, linestyle<span class="op">=</span><span class="st">'-'</span>, linewidth<span class="op">=</span><span class="fl">1.0</span>, label<span class="op">=</span><span class="st">'alvo 50 kW'</span>)</span>
+<span id="cb1-108"><a href=""></a>axs[<span class="dv">0</span>].set_ylim(<span class="dv">0</span>, <span class="dv">250</span>)</span>
+<span id="cb1-109"><a href=""></a>axs[<span class="dv">0</span>].set_xlabel(<span class="vs">r'</span><span class="dv">$</span><span class="vs">w</span><span class="ch">\ </span><span class="pp">[</span><span class="dv">\m</span><span class="pp">athrm{kg/s}]</span><span class="dv">$</span><span class="vs">'</span>)</span>
+<span id="cb1-110"><a href=""></a>axs[<span class="dv">0</span>].set_ylabel(<span class="vs">r'</span><span class="dv">$</span><span class="vs">Q</span><span class="ch">\ </span><span class="pp">[</span><span class="dv">\m</span><span class="pp">athrm{kW}]</span><span class="dv">$</span><span class="vs">'</span>)</span>
+<span id="cb1-111"><a href=""></a>axs[<span class="dv">0</span>].legend()</span>
+<span id="cb1-112"><a href=""></a>axes_minimal_with_arrows(axs[<span class="dv">0</span>])<span class="op">;</span> panel_label_center(axs[<span class="dv">0</span>], <span class="st">'(c$_</span><span class="sc">{i}</span><span class="st">$)'</span>)</span>
+<span id="cb1-113"><a href=""></a></span>
+<span id="cb1-114"><a href=""></a>axs[<span class="dv">1</span>].plot(w2, Q2, label<span class="op">=</span><span class="vs">r'</span><span class="dv">$</span><span class="vs">Q</span><span class="kw">(</span><span class="vs">w</span><span class="kw">)</span><span class="dv">$</span><span class="vs"> com </span><span class="dv">$</span><span class="vs">U</span><span class="kw">(</span><span class="vs">w</span><span class="kw">)</span><span class="dv">$</span><span class="vs">'</span>)</span>
+<span id="cb1-115"><a href=""></a>axs[<span class="dv">1</span>].plot(w2, Qlin2, linestyle<span class="op">=</span><span class="st">'--'</span>, label<span class="op">=</span><span class="vs">r'assíntota </span><span class="dv">$</span><span class="vs">w</span><span class="ch">\t</span><span class="vs">o0</span><span class="dv">$</span><span class="vs">'</span>)</span>
+<span id="cb1-116"><a href=""></a>axs[<span class="dv">1</span>].axhline(Qmax, linestyle<span class="op">=</span><span class="st">':'</span>, label<span class="op">=</span><span class="vs">r'assíntota </span><span class="dv">$</span><span class="vs">w</span><span class="ch">\t</span><span class="vs">o</span><span class="er">\</span><span class="vs">infty</span><span class="dv">$</span><span class="vs">'</span>)</span>
+<span id="cb1-117"><a href=""></a>axs[<span class="dv">1</span>].axhline(Q_target, linestyle<span class="op">=</span><span class="st">'-'</span>, linewidth<span class="op">=</span><span class="fl">1.0</span>, label<span class="op">=</span><span class="st">'alvo 50 kW'</span>)</span>
+<span id="cb1-118"><a href=""></a>axs[<span class="dv">1</span>].set_xlabel(<span class="vs">r'</span><span class="dv">$</span><span class="vs">w</span><span class="ch">\ </span><span class="pp">[</span><span class="dv">\m</span><span class="pp">athrm{kg/s}]</span><span class="dv">$</span><span class="vs">'</span>)</span>
+<span id="cb1-119"><a href=""></a>axs[<span class="dv">1</span>].set_ylabel(<span class="vs">r'</span><span class="dv">$</span><span class="vs">Q</span><span class="ch">\ </span><span class="pp">[</span><span class="dv">\m</span><span class="pp">athrm{kW}]</span><span class="dv">$</span><span class="vs">'</span>)</span>
+<span id="cb1-120"><a href=""></a>axs[<span class="dv">1</span>].legend()</span>
+<span id="cb1-121"><a href=""></a>axes_minimal_with_arrows(axs[<span class="dv">1</span>])<span class="op">;</span> panel_label_center(axs[<span class="dv">1</span>], <span class="st">'(c$_</span><span class="sc">{ii}</span><span class="st">$)'</span>)</span>
+<span id="cb1-122"><a href=""></a></span>
+<span id="cb1-123"><a href=""></a>plt.tight_layout()<span class="op">;</span> plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure>
+<p><img data-src="ne-revisao-newton-raphson_files/figure-revealjs/cell-2-output-1.png"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure>
+<p><img data-src="ne-revisao-newton-raphson_files/figure-revealjs/cell-2-output-2.png"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure>
+<p><img data-src="ne-revisao-newton-raphson_files/figure-revealjs/cell-2-output-3.png"></p>
+</figure>
+</div>
+</div>
+</div>
+<figure style="margin: 0 0 1.25rem 0; text-align:center;">
+<figcaption>
+<b>Figura 2.</b> Comportamento de <span class="math inline">\(U\)</span>, <span class="math inline">\(T_s\)</span> e <span class="math inline">\(Q\)</span> em função de <span class="math inline">\(w\)</span>, considerando <span class="math inline">\(U(w)\)</span>.
+</figcaption>
+</figure>
+<p>Os gráficos da Fig.2 são apresentados em duas colunas; a da esquerda com <span class="math inline">\(w\)</span> variando em uma faixa maior [0 a 50], para enfatizar a assíntota para valores mais altos de <span class="math inline">\(w\)</span> e também a forma total da curva; e a coluna da direita mostrando apenas a faixa mais próxima da raiz [0 a 3], o que nos permite tanto ver a raiz da equação (<span class="math inline">\(w \approx 0,7\)</span>) quanto a assíntota para baixos valores de vazão.</p>
+<h3 id="comportamento-de-uw">Comportamento de <span class="math inline">\(U(w)\)</span></h3>
+<ul>
+<li>Quando <span class="math inline">\(w\to 0\)</span>, vimos que o termo em <span class="math inline">\(w^{0{,}2}\)</span> domina o denominador da Eq.8. Logo, <span class="math inline">\(U(w)\sim \dfrac{1}{0{,}0445}\,w^{0{,}8}\)</span> (<em>i.e.</em>, <span class="math inline">\(U(w)\)</span> cresce com lei de potência).<br>
+</li>
+<li>Para <span class="math inline">\(w\to\infty\)</span>, quem domina o denominador é o termo em <span class="math inline">\(w\)</span>. Então, <span class="math inline">\(U(w)\to \dfrac{1}{0{,}185}\approx 5{,}405\,\mathrm{kW/(m^2\,K)}\)</span> (<em>i.e.</em>, <span class="math inline">\(U(w)\)</span> tende a um platô).<br>
+Nas figuras 2(a<span class="math inline">\(_{i}\)</span>) e 2(a<span class="math inline">\(_{ii}\)</span>), esses dois comportamentos aparecem claramente, primeiro como o crescimento rápido em baixas vazões, e depois com a saturação para altas vazões.</li>
+</ul>
+<h3 id="assíntotas-de-qw-sobrepostas-ao-gráfico">Assíntotas de <span class="math inline">\(Q(w)\)</span> sobrepostas ao gráfico</h3>
+<ul>
+<li>Quando <span class="math inline">\(w\to 0\)</span>, <span class="math inline">\(Q(w)\approx c_p\,\Delta T\,w\)</span>. Com os dados que temos, <span class="math inline">\(c_p\,\Delta T=4{,}2\times 20=84\,\mathrm{kW/(kg/s)}\)</span>.<br>
+A curva de <span class="math inline">\(Q\)</span> coincide com essa reta muito perto de <span class="math inline">\(w=0\)</span>.</li>
+<li>Quando <span class="math inline">\(w\to\infty\)</span>, <span class="math inline">\(Q(w)\to Q_{\max}\)</span>, com <span class="math inline">\(Q_{\max}=\dfrac{A}{0{,}185}\,\Delta T=\dfrac{1{,}4}{0{,}185}\times 20\approx 151{,}35\,\mathrm{kW}\)</span>. No gráfico, essa é a linha horizontal que a curva de <span class="math inline">\(Q\)</span> se aproxima por baixo.<br>
+Nas figuras 2(b<span class="math inline">\(_{i}\)</span>) e 2(b<span class="math inline">\(_{ii}\)</span>), vemos como essas duas assíntotas explicam a curva geral de <span class="math inline">\(Q(w)\)</span>, <em>i.e.</em>, crescimento quase linear no começo e saturação no fim.</li>
+</ul>
+<h3 id="raiz-provável-para-q50mathrmkw-em-wapprox-07">Raiz provável para <span class="math inline">\(Q=50\,\mathrm{kW}\)</span> em <span class="math inline">\(w\approx 0{,}7\)</span></h3>
+<ul>
+<li>Como <span class="math inline">\(50\,\mathrm{kW}\ll Q_{\max}\approx 151{,}35\,\mathrm{kW}\)</span>, a solução está bem antes da saturação.<br>
+</li>
+<li>Visualmente, a interseção <span class="math inline">\(Q(w)=50\)</span> ocorre em <span class="math inline">\(w\approx 0{,}7\,\mathrm{kg/s}\)</span>, coerente com a aproximação linear <span class="math inline">\(w\approx Q/(c_p\Delta T)=50/84\approx 0{,}595\)</span> e com a solução numérica que veremos mais abaixo (<span class="math inline">\(w\approx 0{,}693\)</span>).<br>
+</li>
+<li>Interpretação: ainda estamos no regime quase linear (<span class="math inline">\(Q\propto w\)</span>), então controlar <span class="math inline">\(Q\)</span> via <span class="math inline">\(w\)</span> é eficiente nesse ponto.</li>
+</ul>
+<h3 id="temperatura-de-saída-t_sw">Temperatura de saída <span class="math inline">\(T_s(w)\)</span></h3>
+<ul>
+<li>Para <span class="math inline">\(w\)</span> pequeno: <span class="math inline">\(\xi\)</span> grande, <span class="math inline">\(1-\exp(-\xi)\to 1\)</span> <span class="math inline">\(\Rightarrow T_s\approx T_v=50^\circ\mathrm{C}\)</span> (a água quase atinge o vapor).<br>
+</li>
+<li>Para <span class="math inline">\(w\)</span> grande: <span class="math inline">\(\xi\)</span> pequeno, <span class="math inline">\(1-\exp(-\xi)\sim \xi\propto 1/w\)</span> <span class="math inline">\(\Rightarrow T_s\to T_e=30^\circ\mathrm{C}\)</span> (tempo de residência curto).</li>
+</ul>
+<h3 id="leitura-de-projeto">Leitura de projeto</h3>
+<ul>
+<li>As assíntotas dão duas informações chaves sem cálculo: inclinação inicial <span class="math inline">\(84\,\mathrm{kW/(kg/s)}\)</span> e capacidade máxima <span class="math inline">\(\approx 151{,}35\,\mathrm{kW}\)</span>.<br>
+</li>
+<li>O ponto de operação desejado (<span class="math inline">\(50\,\mathrm{kW}\)</span>) fica muito abaixo do platô, com solução única e boa sensibilidade a <span class="math inline">\(w\)</span>.<br>
+</li>
+<li>Se, no futuro, o alvo se aproximar do platô, aumentar <span class="math inline">\(w\)</span> trará ganhos marginais; seria mais efetivo atuar em <span class="math inline">\(A\)</span> ou em <span class="math inline">\(\Delta T\)</span>.</li>
+</ul>
+</section>
+<section id="estudo-paramétrico-2-influência-de-w-em-t_s-e-q-considerando-u-constante." class="slide level2">
+<h2>Estudo Paramétrico 2 — influência de <span class="math inline">\(w\)</span> em <span class="math inline">\(T_s\)</span> e <span class="math inline">\(Q\)</span>, considerando <span class="math inline">\(U\)</span> constante.</h2>
+<p>Neste estudo, faremos algo muito parecido com o estudo anterior. No entanto, vamos considerar <span class="math inline">\(U\)</span> constante (avaliado em <span class="math inline">\(w=0,7\)</span>. Nosso objetivo é compreender os efeitos que <span class="math inline">\(U\)</span> variável tem sobre o comportamento do trocador de calor.</p>
+<div id="cell-10" class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href=""></a></span>
+<span id="cb2-2"><a href=""></a></span>
+<span id="cb2-3"><a href=""></a><span class="co"># --- Estudo paramétrico 2: comparação U = constante (em w=0.7) vs U(w)</span></span>
+<span id="cb2-4"><a href=""></a><span class="co">#     P&amp;B, sem títulos, só eixos, COM setas e rótulos centralizados sob cada gráfico ---</span></span>
+<span id="cb2-5"><a href=""></a></span>
+<span id="cb2-6"><a href=""></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb2-7"><a href=""></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb2-8"><a href=""></a><span class="im">from</span> cycler <span class="im">import</span> cycler</span>
+<span id="cb2-9"><a href=""></a></span>
+<span id="cb2-10"><a href=""></a><span class="co"># ===== estilo global (P&amp;B, sem grid) =====</span></span>
+<span id="cb2-11"><a href=""></a>plt.rcParams[<span class="st">'axes.grid'</span>] <span class="op">=</span> <span class="va">False</span></span>
+<span id="cb2-12"><a href=""></a>plt.rcParams[<span class="st">'axes.prop_cycle'</span>] <span class="op">=</span> cycler(<span class="st">'color'</span>, [<span class="st">'k'</span>]) <span class="op">*</span> cycler(<span class="st">'linestyle'</span>, [<span class="st">'-'</span>, <span class="st">'--'</span>])</span>
+<span id="cb2-13"><a href=""></a>plt.rcParams[<span class="st">'lines.linewidth'</span>] <span class="op">=</span> <span class="fl">1.6</span></span>
+<span id="cb2-14"><a href=""></a>plt.rcParams[<span class="st">'legend.fontsize'</span>] <span class="op">=</span> <span class="dv">8</span></span>
+<span id="cb2-15"><a href=""></a>plt.rcParams[<span class="st">'legend.frameon'</span>] <span class="op">=</span> <span class="va">False</span></span>
+<span id="cb2-16"><a href=""></a></span>
+<span id="cb2-17"><a href=""></a><span class="kw">def</span> axes_minimal_with_arrows(ax):</span>
+<span id="cb2-18"><a href=""></a>    <span class="co">"""Mostra só eixos esquerdo e inferior e desenha setas nos eixos (em coords do eixo)."""</span></span>
+<span id="cb2-19"><a href=""></a>    <span class="cf">for</span> side <span class="kw">in</span> (<span class="st">'top'</span>, <span class="st">'right'</span>):</span>
+<span id="cb2-20"><a href=""></a>        ax.spines[side].set_visible(<span class="va">False</span>)</span>
+<span id="cb2-21"><a href=""></a>    ax.spines[<span class="st">'left'</span>].set_visible(<span class="va">True</span>)</span>
+<span id="cb2-22"><a href=""></a>    ax.spines[<span class="st">'bottom'</span>].set_visible(<span class="va">True</span>)</span>
+<span id="cb2-23"><a href=""></a>    ax.yaxis.set_ticks_position(<span class="st">'left'</span>)</span>
+<span id="cb2-24"><a href=""></a>    ax.xaxis.set_ticks_position(<span class="st">'bottom'</span>)</span>
+<span id="cb2-25"><a href=""></a>    <span class="co"># setas nos eixos (coordenadas do eixo: 0..1)</span></span>
+<span id="cb2-26"><a href=""></a>    ax.annotate(<span class="st">''</span>, xy<span class="op">=</span>(<span class="fl">1.02</span>, <span class="fl">0.0</span>), xytext<span class="op">=</span>(<span class="op">-</span><span class="fl">0.02</span>, <span class="fl">0.0</span>),</span>
+<span id="cb2-27"><a href=""></a>                xycoords<span class="op">=</span><span class="st">'axes fraction'</span>,</span>
+<span id="cb2-28"><a href=""></a>                arrowprops<span class="op">=</span><span class="bu">dict</span>(arrowstyle<span class="op">=</span><span class="st">'-&gt;'</span>, lw<span class="op">=</span><span class="fl">1.0</span>, shrinkA<span class="op">=</span><span class="dv">0</span>, shrinkB<span class="op">=</span><span class="dv">0</span>))</span>
+<span id="cb2-29"><a href=""></a>    ax.annotate(<span class="st">''</span>, xy<span class="op">=</span>(<span class="fl">0.0</span>, <span class="fl">1.02</span>), xytext<span class="op">=</span>(<span class="fl">0.0</span>, <span class="op">-</span><span class="fl">0.02</span>),</span>
+<span id="cb2-30"><a href=""></a>                xycoords<span class="op">=</span><span class="st">'axes fraction'</span>,</span>
+<span id="cb2-31"><a href=""></a>                arrowprops<span class="op">=</span><span class="bu">dict</span>(arrowstyle<span class="op">=</span><span class="st">'-&gt;'</span>, lw<span class="op">=</span><span class="fl">1.0</span>, shrinkA<span class="op">=</span><span class="dv">0</span>, shrinkB<span class="op">=</span><span class="dv">0</span>))</span>
+<span id="cb2-32"><a href=""></a></span>
+<span id="cb2-33"><a href=""></a><span class="kw">def</span> panel_label_center(ax, label, y_offset<span class="op">=-</span><span class="fl">0.22</span>):</span>
+<span id="cb2-34"><a href=""></a>    <span class="co">"""Rótulo (a), (b), … centralizado sob o subplot."""</span></span>
+<span id="cb2-35"><a href=""></a>    ax.text(<span class="fl">0.5</span>, y_offset, label, transform<span class="op">=</span>ax.transAxes,</span>
+<span id="cb2-36"><a href=""></a>            ha<span class="op">=</span><span class="st">'center'</span>, va<span class="op">=</span><span class="st">'top'</span>, fontsize<span class="op">=</span><span class="dv">10</span>)</span>
+<span id="cb2-37"><a href=""></a></span>
+<span id="cb2-38"><a href=""></a><span class="co"># Parâmetros</span></span>
+<span id="cb2-39"><a href=""></a>Q_target <span class="op">=</span> <span class="fl">50.0</span></span>
+<span id="cb2-40"><a href=""></a>Te <span class="op">=</span> <span class="fl">30.0</span></span>
+<span id="cb2-41"><a href=""></a>Tv <span class="op">=</span> <span class="fl">50.0</span></span>
+<span id="cb2-42"><a href=""></a>cp <span class="op">=</span> <span class="fl">4.2</span></span>
+<span id="cb2-43"><a href=""></a>A  <span class="op">=</span> <span class="fl">1.4</span></span>
+<span id="cb2-44"><a href=""></a>a  <span class="op">=</span> <span class="fl">0.0445</span></span>
+<span id="cb2-45"><a href=""></a>b  <span class="op">=</span> <span class="fl">0.185</span></span>
+<span id="cb2-46"><a href=""></a>dT <span class="op">=</span> Tv <span class="op">-</span> Te</span>
+<span id="cb2-47"><a href=""></a></span>
+<span id="cb2-48"><a href=""></a><span class="co"># U(w) e modelos com U(w)</span></span>
+<span id="cb2-49"><a href=""></a><span class="kw">def</span> U_func(w):</span>
+<span id="cb2-50"><a href=""></a>    <span class="cf">return</span> w <span class="op">/</span> (a<span class="op">*</span>w<span class="op">**</span><span class="fl">0.2</span> <span class="op">+</span> b<span class="op">*</span>w)</span>
+<span id="cb2-51"><a href=""></a></span>
+<span id="cb2-52"><a href=""></a><span class="kw">def</span> Q_varU(w):</span>
+<span id="cb2-53"><a href=""></a>    <span class="cf">return</span> w<span class="op">*</span>cp<span class="op">*</span>dT<span class="op">*</span>(<span class="dv">1</span> <span class="op">-</span> np.exp(<span class="op">-</span>(A<span class="op">/</span>(cp<span class="op">*</span>(a<span class="op">*</span>w<span class="op">**</span><span class="fl">0.2</span> <span class="op">+</span> b<span class="op">*</span>w)))))</span>
+<span id="cb2-54"><a href=""></a></span>
+<span id="cb2-55"><a href=""></a><span class="kw">def</span> Ts_varU(w):</span>
+<span id="cb2-56"><a href=""></a>    <span class="cf">return</span> Te <span class="op">+</span> dT<span class="op">*</span>(<span class="dv">1</span> <span class="op">-</span> np.exp(<span class="op">-</span>(A<span class="op">/</span>(cp<span class="op">*</span>(a<span class="op">*</span>w<span class="op">**</span><span class="fl">0.2</span> <span class="op">+</span> b<span class="op">*</span>w)))))</span>
+<span id="cb2-57"><a href=""></a></span>
+<span id="cb2-58"><a href=""></a><span class="co"># Modelos com U constante (= U em w_ref)</span></span>
+<span id="cb2-59"><a href=""></a><span class="kw">def</span> Q_constU(w, Uc):</span>
+<span id="cb2-60"><a href=""></a>    <span class="cf">return</span> w<span class="op">*</span>cp<span class="op">*</span>dT<span class="op">*</span>(<span class="dv">1</span> <span class="op">-</span> np.exp(<span class="op">-</span>(Uc<span class="op">*</span>A)<span class="op">/</span>(w<span class="op">*</span>cp)))</span>
+<span id="cb2-61"><a href=""></a></span>
+<span id="cb2-62"><a href=""></a><span class="kw">def</span> Ts_constU(w, Uc):</span>
+<span id="cb2-63"><a href=""></a>    <span class="cf">return</span> Te <span class="op">+</span> dT<span class="op">*</span>(<span class="dv">1</span> <span class="op">-</span> np.exp(<span class="op">-</span>(Uc<span class="op">*</span>A)<span class="op">/</span>(w<span class="op">*</span>cp)))</span>
+<span id="cb2-64"><a href=""></a></span>
+<span id="cb2-65"><a href=""></a><span class="co"># U constante: valor em w = 0.7</span></span>
+<span id="cb2-66"><a href=""></a>w_ref <span class="op">=</span> <span class="fl">0.7</span></span>
+<span id="cb2-67"><a href=""></a>U_const <span class="op">=</span> U_func(w_ref)</span>
+<span id="cb2-68"><a href=""></a></span>
+<span id="cb2-69"><a href=""></a><span class="co"># Faixas de w</span></span>
+<span id="cb2-70"><a href=""></a>w1 <span class="op">=</span> np.linspace(<span class="fl">0.05</span>, <span class="fl">50.0</span>, <span class="dv">500</span>)   <span class="co"># ampla</span></span>
+<span id="cb2-71"><a href=""></a>w2 <span class="op">=</span> np.linspace(<span class="fl">0.05</span>, <span class="fl">3.0</span>,  <span class="dv">500</span>)   <span class="co"># zoom</span></span>
+<span id="cb2-72"><a href=""></a></span>
+<span id="cb2-73"><a href=""></a><span class="co"># Curvas com U(w) (variável)</span></span>
+<span id="cb2-74"><a href=""></a>Q1v, Q2v   <span class="op">=</span> Q_varU(w1),   Q_varU(w2)</span>
+<span id="cb2-75"><a href=""></a>Ts1v, Ts2v <span class="op">=</span> Ts_varU(w1),  Ts_varU(w2)</span>
+<span id="cb2-76"><a href=""></a></span>
+<span id="cb2-77"><a href=""></a><span class="co"># Curvas com U constante = U(w_ref)</span></span>
+<span id="cb2-78"><a href=""></a>Q1c, Q2c   <span class="op">=</span> Q_constU(w1, U_const), Q_constU(w2, U_const)</span>
+<span id="cb2-79"><a href=""></a>Ts1c, Ts2c <span class="op">=</span> Ts_constU(w1, U_const), Ts_constU(w2, U_const)</span>
+<span id="cb2-80"><a href=""></a></span>
+<span id="cb2-81"><a href=""></a><span class="co"># --- Ts(w): U(w) vs U=const ---</span></span>
+<span id="cb2-82"><a href=""></a>fig, axs <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">2</span>, figsize<span class="op">=</span>(<span class="dv">8</span>,<span class="dv">4</span>))</span>
+<span id="cb2-83"><a href=""></a>axs[<span class="dv">0</span>].plot(w1, Ts1v, label<span class="op">=</span><span class="vs">r'</span><span class="dv">$</span><span class="vs">T_s</span><span class="dv">$</span><span class="vs"> com </span><span class="dv">$</span><span class="vs">U</span><span class="kw">(</span><span class="vs">w</span><span class="kw">)</span><span class="dv">$</span><span class="vs">'</span>)</span>
+<span id="cb2-84"><a href=""></a>axs[<span class="dv">0</span>].plot(w1, Ts1c, <span class="st">'--'</span>, label<span class="op">=</span><span class="vs">r'</span><span class="dv">$</span><span class="vs">T_s</span><span class="dv">$</span><span class="vs"> com </span><span class="dv">$</span><span class="vs">U_{w=0,7}</span><span class="dv">$</span><span class="vs">'</span>)</span>
+<span id="cb2-85"><a href=""></a>axs[<span class="dv">0</span>].set_xlabel(<span class="vs">r'</span><span class="dv">$</span><span class="vs">w</span><span class="ch">\ </span><span class="pp">[</span><span class="dv">\m</span><span class="pp">athrm{kg/s}]</span><span class="dv">$</span><span class="vs">'</span>)<span class="op">;</span> axs[<span class="dv">0</span>].set_ylabel(<span class="vs">r'</span><span class="dv">$</span><span class="vs">T_s</span><span class="ch">\ </span><span class="pp">[^</span><span class="er">\</span><span class="pp">circ</span><span class="dv">\m</span><span class="pp">athrm{C}]</span><span class="dv">$</span><span class="vs">'</span>)</span>
+<span id="cb2-86"><a href=""></a>axs[<span class="dv">0</span>].legend()</span>
+<span id="cb2-87"><a href=""></a>axes_minimal_with_arrows(axs[<span class="dv">0</span>])</span>
+<span id="cb2-88"><a href=""></a>panel_label_center(axs[<span class="dv">0</span>], <span class="vs">r'</span><span class="kw">(</span><span class="vs">a</span><span class="dv">$</span><span class="vs">_{i}</span><span class="dv">$</span><span class="kw">)</span><span class="vs">'</span>)</span>
+<span id="cb2-89"><a href=""></a></span>
+<span id="cb2-90"><a href=""></a>axs[<span class="dv">1</span>].plot(w2, Ts2v, label<span class="op">=</span><span class="vs">r'</span><span class="dv">$</span><span class="vs">T_s</span><span class="dv">$</span><span class="vs"> com </span><span class="dv">$</span><span class="vs">U</span><span class="kw">(</span><span class="vs">w</span><span class="kw">)</span><span class="dv">$</span><span class="vs">'</span>)</span>
+<span id="cb2-91"><a href=""></a>axs[<span class="dv">1</span>].plot(w2, Ts2c, <span class="st">'--'</span>, label<span class="op">=</span><span class="vs">r'</span><span class="dv">$</span><span class="vs">T_s</span><span class="dv">$</span><span class="vs"> com </span><span class="dv">$</span><span class="vs">U_{w=0,7}</span><span class="dv">$</span><span class="vs">'</span>)</span>
+<span id="cb2-92"><a href=""></a>axs[<span class="dv">1</span>].set_xlabel(<span class="vs">r'</span><span class="dv">$</span><span class="vs">w</span><span class="ch">\ </span><span class="pp">[</span><span class="dv">\m</span><span class="pp">athrm{kg/s}]</span><span class="dv">$</span><span class="vs">'</span>)<span class="op">;</span> axs[<span class="dv">1</span>].set_ylabel(<span class="vs">r'</span><span class="dv">$</span><span class="vs">T_s</span><span class="ch">\ </span><span class="pp">[^</span><span class="er">\</span><span class="pp">circ</span><span class="dv">\m</span><span class="pp">athrm{C}]</span><span class="dv">$</span><span class="vs">'</span>)</span>
+<span id="cb2-93"><a href=""></a>axs[<span class="dv">1</span>].legend()</span>
+<span id="cb2-94"><a href=""></a>axes_minimal_with_arrows(axs[<span class="dv">1</span>])</span>
+<span id="cb2-95"><a href=""></a>panel_label_center(axs[<span class="dv">1</span>], <span class="vs">r'</span><span class="kw">(</span><span class="vs">a</span><span class="dv">$</span><span class="vs">_{ii}</span><span class="dv">$</span><span class="kw">)</span><span class="vs">'</span>)</span>
+<span id="cb2-96"><a href=""></a></span>
+<span id="cb2-97"><a href=""></a>plt.tight_layout()<span class="op">;</span> plt.show()</span>
+<span id="cb2-98"><a href=""></a></span>
+<span id="cb2-99"><a href=""></a><span class="co"># --- Q(w): U(w) vs U=const ---</span></span>
+<span id="cb2-100"><a href=""></a>fig, axs <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">2</span>, figsize<span class="op">=</span>(<span class="dv">8</span>,<span class="dv">4</span>))</span>
+<span id="cb2-101"><a href=""></a>axs[<span class="dv">0</span>].plot(w1, Q1v, label<span class="op">=</span><span class="vs">r'</span><span class="dv">$</span><span class="vs">Q</span><span class="dv">$</span><span class="vs"> com </span><span class="dv">$</span><span class="vs">U</span><span class="kw">(</span><span class="vs">w</span><span class="kw">)</span><span class="dv">$</span><span class="vs">'</span>)</span>
+<span id="cb2-102"><a href=""></a>axs[<span class="dv">0</span>].plot(w1, Q1c, <span class="st">'--'</span>, label<span class="op">=</span><span class="vs">r'</span><span class="dv">$</span><span class="vs">Q</span><span class="dv">$</span><span class="vs"> com </span><span class="dv">$</span><span class="vs">U_{w=0,7}</span><span class="dv">$</span><span class="vs">'</span>)</span>
+<span id="cb2-103"><a href=""></a>axs[<span class="dv">0</span>].axhline(Q_target, linestyle<span class="op">=</span><span class="st">':'</span>, label<span class="op">=</span><span class="st">'alvo 50 kW'</span>)</span>
+<span id="cb2-104"><a href=""></a>axs[<span class="dv">0</span>].set_ylim(<span class="dv">0</span>, <span class="dv">250</span>)  <span class="co"># mesmo limite do (0–50)</span></span>
+<span id="cb2-105"><a href=""></a>axs[<span class="dv">0</span>].set_xlabel(<span class="vs">r'</span><span class="dv">$</span><span class="vs">w</span><span class="ch">\ </span><span class="pp">[</span><span class="dv">\m</span><span class="pp">athrm{kg/s}]</span><span class="dv">$</span><span class="vs">'</span>)<span class="op">;</span> axs[<span class="dv">0</span>].set_ylabel(<span class="vs">r'</span><span class="dv">$</span><span class="vs">Q</span><span class="ch">\ </span><span class="pp">[</span><span class="dv">\m</span><span class="pp">athrm{kW}]</span><span class="dv">$</span><span class="vs">'</span>)</span>
+<span id="cb2-106"><a href=""></a>axs[<span class="dv">0</span>].legend()</span>
+<span id="cb2-107"><a href=""></a>axes_minimal_with_arrows(axs[<span class="dv">0</span>])</span>
+<span id="cb2-108"><a href=""></a>panel_label_center(axs[<span class="dv">0</span>], <span class="vs">r'</span><span class="kw">(</span><span class="vs">b</span><span class="dv">$</span><span class="vs">_{i}</span><span class="dv">$</span><span class="kw">)</span><span class="vs">'</span>)</span>
+<span id="cb2-109"><a href=""></a></span>
+<span id="cb2-110"><a href=""></a>axs[<span class="dv">1</span>].plot(w2, Q2v, label<span class="op">=</span><span class="vs">r'</span><span class="dv">$</span><span class="vs">Q</span><span class="dv">$</span><span class="vs"> com </span><span class="dv">$</span><span class="vs">U</span><span class="kw">(</span><span class="vs">w</span><span class="kw">)</span><span class="dv">$</span><span class="vs">'</span>)</span>
+<span id="cb2-111"><a href=""></a>axs[<span class="dv">1</span>].plot(w2, Q2c, <span class="st">'--'</span>, label<span class="op">=</span><span class="vs">r'</span><span class="dv">$</span><span class="vs">Q</span><span class="dv">$</span><span class="vs"> com </span><span class="dv">$</span><span class="vs">U_{w=0,7}</span><span class="dv">$</span><span class="vs">'</span>)</span>
+<span id="cb2-112"><a href=""></a>axs[<span class="dv">1</span>].axhline(Q_target, linestyle<span class="op">=</span><span class="st">':'</span>, label<span class="op">=</span><span class="st">'alvo 50 kW'</span>)</span>
+<span id="cb2-113"><a href=""></a>axs[<span class="dv">1</span>].set_xlabel(<span class="vs">r'</span><span class="dv">$</span><span class="vs">w</span><span class="ch">\ </span><span class="pp">[</span><span class="dv">\m</span><span class="pp">athrm{kg/s}]</span><span class="dv">$</span><span class="vs">'</span>)<span class="op">;</span> axs[<span class="dv">1</span>].set_ylabel(<span class="vs">r'</span><span class="dv">$</span><span class="vs">Q</span><span class="ch">\ </span><span class="pp">[</span><span class="dv">\m</span><span class="pp">athrm{kW}]</span><span class="dv">$</span><span class="vs">'</span>)</span>
+<span id="cb2-114"><a href=""></a>axs[<span class="dv">1</span>].legend()</span>
+<span id="cb2-115"><a href=""></a>axes_minimal_with_arrows(axs[<span class="dv">1</span>])</span>
+<span id="cb2-116"><a href=""></a>panel_label_center(axs[<span class="dv">1</span>], <span class="vs">r'</span><span class="kw">(</span><span class="vs">b</span><span class="dv">$</span><span class="vs">_{ii}</span><span class="dv">$</span><span class="kw">)</span><span class="vs">'</span>)</span>
+<span id="cb2-117"><a href=""></a></span>
+<span id="cb2-118"><a href=""></a>plt.tight_layout()<span class="op">;</span> plt.show()</span>
+<span id="cb2-119"><a href=""></a></span>
+<span id="cb2-120"><a href=""></a><span class="bu">print</span>(<span class="ss">f"U(0.7) = </span><span class="sc">{</span>U_const<span class="sc">:.6f}</span><span class="ss"> kW/(m^2·K)"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure>
+<p><img data-src="ne-revisao-newton-raphson_files/figure-revealjs/cell-3-output-1.png"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure>
+<p><img data-src="ne-revisao-newton-raphson_files/figure-revealjs/cell-3-output-2.png"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>U(0.7) = 4.095096 kW/(m^2·K)</code></pre>
+</div>
+</div>
+<figure style="margin: 0 0 1.25rem 0; text-align:center;">
+<figcaption>
+<b>Figura 3.</b> Comportamento de <span class="math inline">\(T_s\)</span> e <span class="math inline">\(Q\)</span> em função de <span class="math inline">\(w\)</span>, considerando <span class="math inline">\(U\)</span> constante.
+</figcaption>
+</figure>
+</section>
+<section id="estudo-paramétrico-2-comparação-u_w07-constante-vs.-uw-variável" class="slide level2">
+<h2>Estudo Paramétrico 2 — comparação <span class="math inline">\(U_{w=0,7}\)</span> (constante) vs.&nbsp;<span class="math inline">\(U(w)\)</span> (variável)</h2>
+<p>Os resultados seguem o esperado. Com o coeficiente global de transferência de calor fixo em <span class="math inline">\(U_{w=0,7}\)</span>, o modelo: - Superestima <span class="math inline">\(Q\)</span> e <span class="math inline">\(T_s\)</span> para <span class="math inline">\(w&lt;0{,}7\)</span>, pois o <span class="math inline">\(U(w)\)</span> real é menor nessa faixa. - Subestima <span class="math inline">\(Q\)</span> e <span class="math inline">\(T_s\)</span> para <span class="math inline">\(w&gt;0{,}7\)</span>, pois o <span class="math inline">\(U(w)\)</span> real cresce em direção ao platô <span class="math inline">\(1/0{,}185\)</span>.</p>
+<p>Comparando ao modelo com <span class="math inline">\(U(w)\)</span>, o erro próximo de <span class="math inline">\(w\approx 0{,}7\)</span> é pequeno. Se considerarmos toda a faixa de operação, o erro em <span class="math inline">\(T_s\)</span> atinge cerca de <span class="math inline">\(\sim5\%\)</span>, enquanto o erro em <span class="math inline">\(Q\)</span> pode chegar a <span class="math inline">\(\sim30\%\)</span> em vazões altas; evidenciando a importância de usarmos <span class="math inline">\(U(w)\)</span> variavel se quisermos fazer análises globais.</p>
+<p><strong>Conclusão prática.</strong> Usar <span class="math inline">\(U\)</span> constante é razoável para estudarmos o comportamento do trocador em torno do ponto onde <span class="math inline">\(U\)</span> foi obtido. Já para investigar toda a faixa de vazão (ou operar longe de <span class="math inline">\(w\approx 0{,}7\)</span>), o erro pode se tornar significativo; nesse caso, vamos preferir o modelo completo com <span class="math inline">\(U(w)\)</span>.</p>
+</section>
+<section id="cálculo-do-valor-de-w-que-satisfaz-a-condição-q50-kw." class="slide level2">
+<h2>Cálculo do valor de <span class="math inline">\(w\)</span> que satisfaz a condição <span class="math inline">\(Q=50\)</span> kW.</h2>
+<p>Agora que já analisamos o comportamento analítico e paramétrico da Equação do Trocador de Calor com Condensação (Eq.9), vamos voltar ao problema inicial, que é determinar o valor de <span class="math inline">\(w\)</span> que satisfaça a condição de <span class="math inline">\(Q=50\)</span> kW. Observando a Eq.9, percebemos que ela é implícita em <span class="math inline">\(w\)</span>, quer dizer, não conseguimos isolar <span class="math inline">\(w\)</span> de um lado da equação para podermos calcular o seu valor. A alternativa, então, é resolver essa equação por um método numérico.</p>
+<p>Vamos escolher aqui o método de Newton-Raphson, por ser de rápida convergência, elegância analítica e simplicidade computacional; características que o tornaram o mais utilizado método para obtenção de raízes de equações.</p>
+</section>
+<section id="método-de-newtonraphson" class="slide level2">
+<h2>Método de Newton–Raphson</h2>
+<p>Primeiro, vamos criar a função <span class="math inline">\(f(w)\)</span> a partir da Eq.9:</p>
+<p><span class="math display">\[
+f(w) = Q  - w c_p (T_v - T_e) \left[ 1 - e^{-\frac{A}{ c_p \left( 0,0445 w^{0,2} + 0,185 w \right) } } \right]  \tag{20}
+\]</span></p>
+<p>Desta forma, o <strong>problema matemático</strong> pode ser enunciado como: encontre o valor de <span class="math inline">\(w\)</span> que leva <span class="math inline">\(f(w)\)</span> a zero.</p>
+<p><span class="math display">\[
+f(w)   = 0  \tag{21}
+\]</span></p>
+<h3 id="dedução-geométrica-do-método-de-newton-raphson">Dedução geométrica do método de Newton-Raphson</h3>
+<p>Vamos supor que estamos procurando a raiz de:</p>
+<p><span class="math display">\[
+  y(x) = 0  \tag{22}
+\]</span></p>
+<p>E digamos que podemos avaliar o valor da função <span class="math inline">\(y(x)\)</span> e sua derivada <span class="math inline">\(y'(x)\)</span> para qualquer valor de <span class="math inline">\(x\)</span>. Uma alternativa seria percorrer todos os valores de <span class="math inline">\(x\)</span> até encontrar o local onde <span class="math inline">\(y(x)=0\)</span>. Esse método é conhecido como <strong>Busca Exaustiva</strong>. O problema com ele é a demora para encontrar a outra solução. Existem outros métodos já vistos nos cursos de <em>Cálculo Numérico</em>, como o <em>Método da Bisseção</em>.</p>
+<p>No método de <em>Newton-Raphson</em>, a pessoa começa a procura por um determinado valor inicial <span class="math inline">\(x_1\)</span> (esse valor em geral é arbitrado conhecendo a física do problema. No ponto <span class="math inline">\(x_1\)</span>, avaliamos <span class="math inline">\(y(x_1)\)</span> e <span class="math inline">\(y'(x_1)\)</span>. Nesse momento, fazemos a <strong>aproximação</strong> de que a função <span class="math inline">\(y(x)\)</span> é uma reta (ver a Fig.2), e então encontramos o valor de <span class="math inline">\(x_2\)</span> que faria com que <span class="math inline">\(y_2\)</span> fosse zero: <span class="math display">\[  
+y'(x_1) = \left. \frac{dy}{dx}\right)_{x_1} = \frac{y(x_2)-y(x_1)}{x_2-x_1} = \frac{0-y(x_1)}{x_2-x_1}  \tag{23}
+\]</span></p>
+<p>O que implica em:</p>
+<p><span class="math display">\[
+x_2 = x_1 - \frac{y(x_1)}{y'(x_1)}  \tag{24}
+\]</span></p>
+<figure style="margin: 0 0 1.25rem 0; text-align:center;">
+<img src="../figures/ne-newton-raphson-fig-02.png" alt="Esquema do método de newton raphson - primeiro passo" width="540" style="display:block; margin:0 auto; max-width:100%;">
+<figcaption>
+<b>Figura 2.</b> Esquema do método de Newton-Raphson (primeiro passo).
+</figcaption>
+</figure>
+<p>Mas logo percebemos que <span class="math inline">\(x_2\)</span> não é a raiz de <span class="math inline">\(y(x)\)</span>, porque a curva não é uma reta (simplificação que fizemos para chegar à Eq.24) . No entanto, se tivermos escolhido um bom <strong>valor inicial</strong>, estaremos mais próximos da raiz. Fazemos então a mesma coisa no ponto 2, <em>i.e.</em>, avaliamos <span class="math inline">\(y(x_2)\)</span> e <span class="math inline">\(y'(x_2)\)</span>, traçamos uma reta e rumamos para o ponto 3 (como pode ser visto na Fig 3):</p>
+<p><span class="math display">\[
+x_3 = x_2 - \frac{y(x_2)}{y'(x_2)}  \tag{24}
+\]</span></p>
+<figure style="margin: 0 0 1.25rem 0; text-align:center;">
+<img src="../figures/ne-newton-raphson-fig-03.png" alt="Esquema do método de newton raphson - próximos passos" width="320" style="display:block; margin:0 auto; max-width:100%;">
+<figcaption>
+<b>Figura 3.</b> Esquema do método de Newton-Raphson (próximos passos).
+</figcaption>
+</figure>
+<p>Generalizando, o <strong>Método de Newton-Raphson</strong> é um processo iterativo que segue a seguinte relação até chegarmos o mais próximo o desejado da raiz:</p>
+<p><span class="math display">\[
+x_{k+1} = x_{k} - \frac{y(x_k)}{y'(x_k)}  \tag{24}
+\]</span></p>
+<p>O Método de Newton-Raphson é bastante poderoso. Quando ele converge para a raiz, ele converge rapidamente. Quando ele diverge, há algumas estratégias (<em>i.e.</em>, limitar os valores possíveis de <span class="math inline">\(x\)</span>), mas vamos focar na mais simples e usual, que é iniciar com um valor inicial diferente.</p>
+</section>
+<section id="derivada-numérica" class="slide level2">
+<h2>Derivada numérica</h2>
+<p>Vemos na Eq.24 que é necessário calcular o valor da derivada. Isso pode ser feito de duas formas: derivada analítica, quando possível e fácil, ou então a partir de alguma aproximação numérica. A aproximação numérica mais comum é pelo método das diferenças finitas à frente, na qual aproximamos a derivada por diferenças simples:</p>
+<p><span class="math display">\[
+    y'(x) = \frac{dy}{dx} = \lim_{h \to 0} \frac{y(x+h) - y(x)}{h} \approx  \frac{y(x+h) - y(x)}{h}  \tag{25}
+\]</span></p>
+<h3 id="derivada-analítica">Derivada analítica</h3>
+<p>Outra alternativa é calcular a derivada analítica. Para o problema exemplo deste <em>notebook</em>, temos que:</p>
+<p>Sendo:</p>
+<p><span class="math display">\[
+f(w)=Q-w c_p \Delta T \left[ 1- e^{\xi} \right] \tag{26}
+\]</span></p>
+<p>onde:</p>
+<p><span class="math display">\[
+\xi(w)=-\dfrac{A}{c_p\,[\,a\,w^{0.2}+b\,w\,]} \tag{27}
+\]</span></p>
+<p>com <span class="math inline">\(a=0,0445\)</span> e <span class="math inline">\(b=0,185\)</span>; e com:</p>
+<p><span class="math display">\[
+\Delta T=(T_v-T_e) \tag{28}
+\]</span></p>
+<p>Então:</p>
+<p><span class="math display">\[
+f'(w)=-c_p \Delta T \left[ 1 - e^{\xi}-w e^{\xi} \xi'(w) \right]
+\]</span></p>
+<p>Com:</p>
+<p><span class="math display">\[
+\xi'(w)=\frac{A (0.2 a w^{-0.8}+b)}{c_p \left[ a w^{0.2}+b w \right]^2}
+\]</span></p>
+<p>Essa expressão serve como referência para comparar com a versão numérica. Vamos agora encontrar a raiz da Eq.24 por Newton-Raphson, usando a derivada numérica (por diferenças finitas à frente) e a derivada analítica.</p>
+<div id="cell-18" class="cell" data-execution_count="4">
+<div class="cell-output cell-output-stdout">
+<pre><code>Newton (dif. finitas): w = 0.691871 kg/s, f(w) = -7.105427e-15 kW
+Newton (derivada analitica): w = 0.691871 kg/s, f(w) = -7.105427e-15 kW
+f'(w≈0.691871): df=-5.368351e+01, analitica=-5.368356e+01, erro_rel=8.153e-07</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure>
+<p><img data-src="ne-revisao-newton-raphson_files/figure-revealjs/cell-4-output-2.png"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure>
+<p><img data-src="ne-revisao-newton-raphson_files/figure-revealjs/cell-4-output-3.png"></p>
+</figure>
+</div>
+</div>
+</div>
+<figure style="margin: 0 0 1.25rem 0; text-align:center;">
+<figcaption>
+<b>Figura 4.</b> Convergência de <span class="math inline">\(f(w)\)</span> e <span class="math inline">\(w\)</span> para cada iteração de Newton-Raphson.
+</figcaption>
+</figure>
+</section>
+<section id="discussão-dos-aspectos-numéricos" class="slide level2">
+<h2>Discussão dos Aspectos Numéricos</h2>
+<h3 id="comportamento-de-newtonraphson-neste-problema">Comportamento de Newton–Raphson neste problema</h3>
+<p>Com o palpite simples <span class="math display">\[
+w_0 \approx \frac{Q}{c_p\,\Delta T},
+\]</span> as iterações convergiram de forma rápida e estável para a raiz <span class="math inline">\(w^*\)</span>. Observou-se queda acentuada de <span class="math inline">\(|f(w_k)|\)</span> a cada passo e sequência <span class="math inline">\(w_k\)</span> rapidamente estabilizada. A suavidade de <span class="math display">\[
+f(w)=Q-w\,c_p\,\Delta T\,[1-\exp(\xi(w))],\qquad
+\xi(w)=-\frac{A}{c_p\,(a\,w^{0.2}+b\,w)},
+\]</span> no domínio visitado favoreceu esse comportamento.</p>
+<h3 id="diferença-entre-as-duas-derivadas-neste-problema">Diferença entre as duas derivadas neste problema</h3>
+<p>A derivada analítica, <span class="math display">\[
+f'(w)=-c_p\,\Delta T\,[1-\exp(\xi)-w\,\exp(\xi)\,\xi'(w)],\qquad
+\xi'(w)=\frac{A\,(0.2\,a\,w^{-0.8}+b)}{c_p\,[a\,w^{0.2}+b\,w]^2},
+\]</span> e a aproximação por diferença finita à frente, <span class="math display">\[
+f'(w)\approx\frac{f(w+h)-f(w)}{h},
+\]</span> levaram ao mesmo <span class="math inline">\(w^*\)</span> e com número de iterações muito parecido. Aqui isso acontece porque <span class="math inline">\(f\)</span> é suave e o passo <span class="math inline">\(h\)</span> foi estável.</p>
+<h3 id="comportamento-de-newtonraphson-em-geral">Comportamento de Newton–Raphson em geral</h3>
+<p>Newton–Raphson é muito rápido <strong>quando</strong> há bom palpite, <span class="math inline">\(f\)</span> e <span class="math inline">\(f'\)</span> são regulares perto da raiz e a direção de passo é confiável. Fora dessas condições, pode oscilar, divergir ou sair do domínio, o que pode necessitar de técnicas adicionais mais robustas.</p>
+<h3 id="diferença-entre-as-duas-derivadas-em-geral">Diferença entre as duas derivadas em geral</h3>
+<p>A derivada analítica reduz iterações e evita a sensibilidade à escolha de <span class="math inline">\(h\)</span>; vale especialmente quando se busca tolerâncias finas ou quando avaliar <span class="math inline">\(f\)</span> é caro. A diferença finita é universal e simples, mas equilibra erro de truncamento e arredondamento via <span class="math inline">\(h\)</span> e pode reduzir a ordem efetiva de convergência.</p>
+<blockquote>
+<p><strong>Resumo final:</strong> quando disponível, use <span class="math inline">\(f'(w)\)</span> analítica; quando não, diferença finita bem escolhida resolve. Primeiro faça funcionar, depois refine.</p>
+</blockquote>
+</section>
+<section id="discussão-final" class="slide level2 scrollable">
+<h2>Discussão Final</h2>
+<p>Nesta <em>nota de estudo</em>, nós revisamos o <strong>Método de Newton-Raphson</strong> usando como exemplo um trocador de calor com condensação coeficiente global de transferência de calor (<span class="math inline">\(U\)</span>) variando com a vazão (<span class="math inline">\(w\)</span>). Seguimos os seguintes passos:</p>
+<ol type="1">
+<li>Construção do modelo matemático</li>
+<li>Análise de assíntotas do modelo matemático nos limites de <span class="math inline">\(w\)</span><br>
+</li>
+<li>Análise paramétrica de como várias grandezas (<em>i.e.</em>, <span class="math inline">\(U\)</span>, <span class="math inline">\(T_s\)</span> e <span class="math inline">\(Q\)</span>) variam com o aumento da vazão<br>
+</li>
+<li>Estudo da influência da variação de <span class="math inline">\(U\)</span> com <span class="math inline">\(w\)</span> em relação a um modelo com <span class="math inline">\(U\)</span> constante<br>
+</li>
+<li>Revisão do Método de Newton Raphson<br>
+</li>
+<li>Cálculo numérico da derivada que usando a aproximação das diferenças finitas à frente<br>
+</li>
+<li>Cálculo analítico da derivada que aparece em Newton-Raphson<br>
+</li>
+<li>Análise do resultado obtido por Newton-Raphon</li>
+</ol>
+<p>Desta forma, aproveitamos um exemplo real para revisar a construção de um modelo matemático, o estudo de suas assíntotas e do seu comportamento em função dos parâmetros, e finalmente encontramos a solução do problema utilizando um famoso método numérico.</p>
+</section>
+<section id="novos-exercícios-práticos" class="slide level2">
+<h2>Novos Exercícios Práticos</h2>
+<ul>
+<li>Estimar <span class="math inline">\(U(w)\)</span> com correlações empíricas<br>
+</li>
+<li>Estudar a influência de <span class="math inline">\(A\)</span>, <span class="math inline">\(\Delta T\)</span> e <span class="math inline">\(c_p\)</span> no comportamento do trocador de calor.</li>
+<li>Experimente outros valores iniciais de <span class="math inline">\(w\)</span> para estudar a convergência de Newton-Raphson.</li>
+<li>Procure na literatura científica dados experimentais de <em>U(w)</em>, ajuste os dados por mínimos quadrados e refaça este estudo.</li>
+<li>Estime a perda de carga no trocador em função de <span class="math inline">\(w\)</span> e estime os custos de bombeamento para cada condição.</li>
+<li>Faça uma propagação de incertezas dos parâmetros para <span class="math inline">\(W\)</span> e para a raiz de <em>f(W)</em>.</li>
+<li>Implemente outros métodos e compare com o Newton-Raphson que vimos nesta <em>nota de estudo</em>
+<ul>
+<li>Clássicos (<em>e.g.</em>, Bisseção, Busca Exaustiva).<br>
+</li>
+<li>Newton-Raphson e variações (<em>e.g.</em>, Secante, Newton Amortecido, Newton <em>Safeguarded</em>).</li>
+<li>Alternativos (<em>e.g.</em>, Ponto Fixo, <em>Regula Falsi</em>, Brent)<br>
+</li>
+</ul></li>
+<li>Pesquise outros métodos de obtenção de raizes de funções.</li>
+</ul>
+
+</section></section>
+    </div>
+  <div class="quarto-auto-generated-content" style="display: none;">
+<div class="footer footer-default">
+
+</div>
+</div></div>
+
+  <script>window.backupDefine = window.define; window.define = undefined;</script>
+  <script src="ne-revisao-newton-raphson_files/libs/revealjs/dist/reveal.js"></script>
+  <!-- reveal.js plugins -->
+  <script src="ne-revisao-newton-raphson_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.js"></script>
+  <script src="ne-revisao-newton-raphson_files/libs/revealjs/plugin/pdf-export/pdfexport.js"></script>
+  <script src="ne-revisao-newton-raphson_files/libs/revealjs/plugin/reveal-menu/menu.js"></script>
+  <script src="ne-revisao-newton-raphson_files/libs/revealjs/plugin/reveal-menu/quarto-menu.js"></script>
+  <script src="ne-revisao-newton-raphson_files/libs/revealjs/plugin/quarto-support/support.js"></script>
+  
+
+  <script src="ne-revisao-newton-raphson_files/libs/revealjs/plugin/notes/notes.js"></script>
+  <script src="ne-revisao-newton-raphson_files/libs/revealjs/plugin/search/search.js"></script>
+  <script src="ne-revisao-newton-raphson_files/libs/revealjs/plugin/zoom/zoom.js"></script>
+  <script src="ne-revisao-newton-raphson_files/libs/revealjs/plugin/math/math.js"></script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://revealjs.com/config/
+      Reveal.initialize({
+'controlsAuto': true,
+'previewLinksAuto': false,
+'pdfSeparateFragments': false,
+'autoAnimateEasing': "ease",
+'autoAnimateDuration': 1,
+'autoAnimateUnmatched': true,
+'jumpToSlide': true,
+'menu': {"side":"left","useTextContentForMissingTitles":true,"markers":false,"loadIcons":false,"custom":[{"title":"Tools","icon":"<i class=\"fas fa-gear\"></i>","content":"<ul class=\"slide-menu-items\">\n<li class=\"slide-tool-item active\" data-item=\"0\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.fullscreen(event)\"><kbd>f</kbd> Fullscreen</a></li>\n<li class=\"slide-tool-item\" data-item=\"1\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.speakerMode(event)\"><kbd>s</kbd> Speaker View</a></li>\n<li class=\"slide-tool-item\" data-item=\"2\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.overview(event)\"><kbd>o</kbd> Slide Overview</a></li>\n<li class=\"slide-tool-item\" data-item=\"3\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.togglePdfExport(event)\"><kbd>e</kbd> PDF Export Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"4\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleScrollView(event)\"><kbd>r</kbd> Scroll View Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"5\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.keyboardHelp(event)\"><kbd>?</kbd> Keyboard Help</a></li>\n</ul>"}],"openButton":true},
+'smaller': false,
+ 
+        // Display controls in the bottom right corner
+        controls: false,
+
+        // Help the user learn the controls by providing hints, for example by
+        // bouncing the down arrow when they first encounter a vertical slide
+        controlsTutorial: false,
+
+        // Determines where controls appear, "edges" or "bottom-right"
+        controlsLayout: 'edges',
+
+        // Visibility rule for backwards navigation arrows; "faded", "hidden"
+        // or "visible"
+        controlsBackArrows: 'faded',
+
+        // Display a presentation progress bar
+        progress: true,
+
+        // Display the page number of the current slide
+        slideNumber: 'c/t',
+
+        // 'all', 'print', or 'speaker'
+        showSlideNumber: 'all',
+
+        // Add the current slide number to the URL hash so that reloading the
+        // page/copying the URL will return you to the same slide
+        hash: true,
+
+        // Start with 1 for the hash rather than 0
+        hashOneBasedIndex: false,
+
+        // Flags if we should monitor the hash and change slides accordingly
+        respondToHashChanges: true,
+
+        // Push each slide change to the browser history
+        history: true,
+
+        // Enable keyboard shortcuts for navigation
+        keyboard: true,
+
+        // Enable the slide overview mode
+        overview: true,
+
+        // Disables the default reveal.js slide layout (scaling and centering)
+        // so that you can use custom CSS layout
+        disableLayout: false,
+
+        // Vertical centering of slides
+        center: false,
+
+        // Enables touch navigation on devices with touch input
+        touch: true,
+
+        // Loop the presentation
+        loop: false,
+
+        // Change the presentation direction to be RTL
+        rtl: false,
+
+        // see https://revealjs.com/vertical-slides/#navigation-mode
+        navigationMode: 'linear',
+
+        // Randomizes the order of slides each time the presentation loads
+        shuffle: false,
+
+        // Turns fragments on and off globally
+        fragments: true,
+
+        // Flags whether to include the current fragment in the URL,
+        // so that reloading brings you to the same fragment position
+        fragmentInURL: false,
+
+        // Flags if the presentation is running in an embedded mode,
+        // i.e. contained within a limited portion of the screen
+        embedded: false,
+
+        // Flags if we should show a help overlay when the questionmark
+        // key is pressed
+        help: true,
+
+        // Flags if it should be possible to pause the presentation (blackout)
+        pause: true,
+
+        // Flags if speaker notes should be visible to all viewers
+        showNotes: false,
+
+        // Global override for autoplaying embedded media (null/true/false)
+        autoPlayMedia: null,
+
+        // Global override for preloading lazy-loaded iframes (null/true/false)
+        preloadIframes: null,
+
+        // Number of milliseconds between automatically proceeding to the
+        // next slide, disabled when set to 0, this value can be overwritten
+        // by using a data-autoslide attribute on your slides
+        autoSlide: 0,
+
+        // Stop auto-sliding after user input
+        autoSlideStoppable: true,
+
+        // Use this method for navigation when auto-sliding
+        autoSlideMethod: null,
+
+        // Specify the average time in seconds that you think you will spend
+        // presenting each slide. This is used to show a pacing timer in the
+        // speaker view
+        defaultTiming: null,
+
+        // Enable slide navigation via mouse wheel
+        mouseWheel: false,
+
+        // The display mode that will be used to show slides
+        display: 'block',
+
+        // Hide cursor if inactive
+        hideInactiveCursor: true,
+
+        // Time before the cursor is hidden (in ms)
+        hideCursorTime: 5000,
+
+        // Opens links in an iframe preview overlay
+        previewLinks: false,
+
+        // Transition style (none/fade/slide/convex/concave/zoom)
+        transition: 'none',
+
+        // Transition speed (default/fast/slow)
+        transitionSpeed: 'default',
+
+        // Transition style for full page slide backgrounds
+        // (none/fade/slide/convex/concave/zoom)
+        backgroundTransition: 'none',
+
+        // Number of slides away from the current that are visible
+        viewDistance: 3,
+
+        // Number of slides away from the current that are visible on mobile
+        // devices. It is advisable to set this to a lower number than
+        // viewDistance in order to save resources.
+        mobileViewDistance: 2,
+
+        // The "normal" size of the presentation, aspect ratio will be preserved
+        // when the presentation is scaled to fit different resolutions. Can be
+        // specified using percentage units.
+        width: 1366,
+
+        height: 768,
+
+        // Factor of the display size that should remain empty around the content
+        margin: 5.0e-2,
+
+        math: {
+          mathjax: 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/MathJax.js',
+          config: 'TeX-AMS_HTML-full',
+          tex2jax: {
+            inlineMath: [['\\(','\\)']],
+            displayMath: [['\\[','\\]']],
+            balanceBraces: true,
+            processEscapes: false,
+            processRefs: true,
+            processEnvironments: true,
+            preview: 'TeX',
+            skipTags: ['script','noscript','style','textarea','pre','code'],
+            ignoreClass: 'tex2jax_ignore',
+            processClass: 'tex2jax_process'
+          },
+        },
+
+        // reveal.js plugins
+        plugins: [QuartoLineHighlight, PdfExport, RevealMenu, QuartoSupport,
+
+          RevealMath,
+          RevealNotes,
+          RevealSearch,
+          RevealZoom
+        ]
+      });
+    </script>
+    <script id="quarto-html-after-body" type="application/javascript">
+      window.document.addEventListener("DOMContentLoaded", function (event) {
+        const tabsets =  window.document.querySelectorAll(".panel-tabset-tabby")
+        tabsets.forEach(function(tabset) {
+          const tabby = new Tabby('#' + tabset.id);
+        });
+        const isCodeAnnotation = (el) => {
+          for (const clz of el.classList) {
+            if (clz.startsWith('code-annotation-')) {                     
+              return true;
+            }
+          }
+          return false;
+        }
+        const onCopySuccess = function(e) {
+          // button target
+          const button = e.trigger;
+          // don't keep focus
+          button.blur();
+          // flash "checked"
+          button.classList.add('code-copy-button-checked');
+          var currentTitle = button.getAttribute("title");
+          button.setAttribute("title", "Copied!");
+          let tooltip;
+          if (window.bootstrap) {
+            button.setAttribute("data-bs-toggle", "tooltip");
+            button.setAttribute("data-bs-placement", "left");
+            button.setAttribute("data-bs-title", "Copied!");
+            tooltip = new bootstrap.Tooltip(button, 
+              { trigger: "manual", 
+                customClass: "code-copy-button-tooltip",
+                offset: [0, -8]});
+            tooltip.show();    
+          }
+          setTimeout(function() {
+            if (tooltip) {
+              tooltip.hide();
+              button.removeAttribute("data-bs-title");
+              button.removeAttribute("data-bs-toggle");
+              button.removeAttribute("data-bs-placement");
+            }
+            button.setAttribute("title", currentTitle);
+            button.classList.remove('code-copy-button-checked');
+          }, 1000);
+          // clear code selection
+          e.clearSelection();
+        }
+        const getTextToCopy = function(trigger) {
+            const codeEl = trigger.previousElementSibling.cloneNode(true);
+            for (const childEl of codeEl.children) {
+              if (isCodeAnnotation(childEl)) {
+                childEl.remove();
+              }
+            }
+            return codeEl.innerText;
+        }
+        const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+          text: getTextToCopy
+        });
+        clipboard.on('success', onCopySuccess);
+        if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+          const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+            text: getTextToCopy,
+            container: window.document.getElementById('quarto-embedded-source-code-modal')
+          });
+          clipboardModal.on('success', onCopySuccess);
+        }
+          var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+          var mailtoRegex = new RegExp(/^mailto:/);
+            var filterRegex = new RegExp('/' + window.location.host + '/');
+          var isInternal = (href) => {
+              return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+          }
+          // Inspect non-navigation links and adorn them if external
+         var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+          for (var i=0; i<links.length; i++) {
+            const link = links[i];
+            if (!isInternal(link.href)) {
+              // undo the damage that might have been done by quarto-nav.js in the case of
+              // links that we want to consider external
+              if (link.dataset.originalHref !== undefined) {
+                link.href = link.dataset.originalHref;
+              }
+            }
+          }
+        function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+          const config = {
+            allowHTML: true,
+            maxWidth: 500,
+            delay: 100,
+            arrow: false,
+            appendTo: function(el) {
+                return el.closest('section.slide') || el.parentElement;
+            },
+            interactive: true,
+            interactiveBorder: 10,
+            theme: 'light-border',
+            placement: 'bottom-start',
+          };
+          if (contentFn) {
+            config.content = contentFn;
+          }
+          if (onTriggerFn) {
+            config.onTrigger = onTriggerFn;
+          }
+          if (onUntriggerFn) {
+            config.onUntrigger = onUntriggerFn;
+          }
+            config['offset'] = [0,0];
+            config['maxWidth'] = 700;
+          window.tippy(el, config); 
+        }
+        const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+        for (var i=0; i<noterefs.length; i++) {
+          const ref = noterefs[i];
+          tippyHover(ref, function() {
+            // use id or data attribute instead here
+            let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+            try { href = new URL(href).hash; } catch {}
+            const id = href.replace(/^#\/?/, "");
+            const note = window.document.getElementById(id);
+            if (note) {
+              return note.innerHTML;
+            } else {
+              return "";
+            }
+          });
+        }
+        const findCites = (el) => {
+          const parentEl = el.parentElement;
+          if (parentEl) {
+            const cites = parentEl.dataset.cites;
+            if (cites) {
+              return {
+                el,
+                cites: cites.split(' ')
+              };
+            } else {
+              return findCites(el.parentElement)
+            }
+          } else {
+            return undefined;
+          }
+        };
+        var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+        for (var i=0; i<bibliorefs.length; i++) {
+          const ref = bibliorefs[i];
+          const citeInfo = findCites(ref);
+          if (citeInfo) {
+            tippyHover(citeInfo.el, function() {
+              var popup = window.document.createElement('div');
+              citeInfo.cites.forEach(function(cite) {
+                var citeDiv = window.document.createElement('div');
+                citeDiv.classList.add('hanging-indent');
+                citeDiv.classList.add('csl-entry');
+                var biblioDiv = window.document.getElementById('ref-' + cite);
+                if (biblioDiv) {
+                  citeDiv.innerHTML = biblioDiv.innerHTML;
+                }
+                popup.appendChild(citeDiv);
+              });
+              return popup.innerHTML;
+            });
+          }
+        }
+      });
+      </script>
+    
+
+</body></html>
