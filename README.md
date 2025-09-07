@@ -57,6 +57,22 @@ Ao final, o(a) estudante deverá ser capaz de:
 
 ## Notas de Estudos
 
-- **Revisão de Perda de Carga** —  [[Colab](https://colab.research.google.com/github/Prof-Magnani/sistemas-termicos/blob/main/notebooks/ne-revisao-perda-carga.ipynb)], [[html](./html/ne-revisao-perda-carga.html)], [[pdf](./pdf/ne-revisao-perda-carga.pdf)], [[reveal.js](./revealjs/ne-revisao-perda-carga-slides.html)], [[pptx](./pptx/ne-revisao-perda-carga.pptx)] 
-- **Revisão de Newton-Raphson** —  [[Colab](https://colab.research.google.com/github/Prof-Magnani/sistemas-termicos/blob/main/notebooks/ne-revisao-newton-raphson.ipynb)], [[html](./html/ne-revisao-newton-raphson.html)], [[pdf](./pdf/ne-revisao-newton-raphson.pdf)], [[reveal.js](./revealjs/ne-revisao-newton-raphson-slides.html)], [[pptx](./pptx/ne-revisao-newton-raphson.pptx)]
-- **Revisão de Trocadores de Calor** —  [[Colab](https://colab.research.google.com/github/Prof-Magnani/sistemas-termicos/blob/main/notebooks/ne-revisao-trocador-calor.ipynb)], [[html](./html/ne-revisao-trocador-calor.html)], [[pdf](./pdf/ne-revisao-newton-raphson.pdf)], [[reveal.js](./revealjs/ne-revisao-trocador-calor-slides.html)], [[pptx](./pptx/ne-revisao-trocador-calor.pptx)]
+- **Revisão de Perda de Carga**  
+  📓 [Colab](https://colab.research.google.com/github/Prof-Magnani/sistemas-termicos/blob/main/notebooks/ne-revisao-perda-carga.ipynb) · 🌐 [HTML](./html/ne-revisao-perda-carga.html) · 📑 [PDF](./pdf/ne-revisao-perda-carga.pdf) · 🎞️ [Slides](./revealjs/ne-revisao-perda-carga-slides.html) · 📊 [PPTX](./pptx/ne-revisao-perda-carga.pptx)
+
+- **Revisão de Newton-Raphson**  
+  📓 [Colab](https://colab.research.google.com/github/Prof-Magnani/sistemas-termicos/blob/main/notebooks/ne-revisao-newton-raphson.ipynb) · 🌐 [HTML](./html/ne-revisao-newton-raphson.html) · 📑 [PDF](./pdf/ne-revisao-newton-raphson.pdf) · 🎞️ [Slides](./revealjs/ne-revisao-newton-raphson-slides.html) · 📊 [PPTX](./pptx/ne-revisao-newton-raphson.pptx)
+
+- **Revisão de Trocadores de Calor**  
+  📓 [Colab](https://colab.research.google.com/github/Prof-Magnani/sistemas-termicos/blob/main/notebooks/ne-revisao-trocador-calor.ipynb) · 🌐 [HTML](./html/ne-revisao-trocador-calor.html) · 📑 [PDF](./pdf/ne-revisao-trocador-calor.pdf) · 🎞️ [Slides](./revealjs/ne-revisao-trocador-calor-slides.html) · 📊 [PPTX](./pptx/ne-revisao-trocador-calor.pptx)
+
+
+ ### Sobre os formatos disponíveis
+
+Cada nota de estudo é publicada em diferentes formatos, para atender a usos variados:
+
+- 📓 **Colab** — versão interativa do notebook no Google Colab, onde é possível executar os códigos em Python diretamente no navegador, sem instalação local.  
+- 🌐 **HTML** — versão estática em página web, ideal para leitura rápida e visualização em qualquer dispositivo.  
+- 📑 **PDF** — versão em documento fixo, prática para impressão, anotações e uso offline.  
+- 🎞️ **Slides (reveal.js)** — versão em formato de apresentação, adequada para revisões em sala de aula ou exposições rápidas.  
+- 📊 **PPTX** — versão compatível com PowerPoint/LibreOffice Impress, permitindo editar os slides e adaptá-los a outras apresentações.
