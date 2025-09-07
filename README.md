@@ -76,3 +76,17 @@ Cada nota de estudo é publicada em diferentes formatos, para atender a usos var
 - 📑 **PDF** — versão em documento fixo, prática para impressão, anotações e uso offline.  
 - 🎞️ **Slides (reveal.js)** — versão em formato de apresentação, adequada para revisões em sala de aula ou exposições rápidas.  
 - 📊 **PPTX** — versão compatível com PowerPoint/LibreOffice Impress, permitindo editar os slides e adaptá-los a outras apresentações.
+
+---
+
+---
+
+<p align="center">
+  <a href="https://jupyter.org" target="_blank">
+    <img src="https://jupyter.org/assets/homepage/main-logo.svg" alt="Jupyter" width="180"/>
+  </a>
+</p>
+
+<p align="center">
+  <b>Jupyter é um laboratório vivo de ensino e prática de ciência — integrado, auditável, reprodutível, interativo e colaborativo.</b>
+</p>
