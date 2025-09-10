@@ -79,6 +79,21 @@ Cada nota de estudo é publicada em diferentes formatos, para atender a usos var
 
 ---
 
+## Desenvolvimento do Repositório
+
+Se você deseja **reproduzir os notebooks localmente** ou entender como gerar as diferentes saídas (HTML, PDF, Reveal.js, PPTX), consulte o guia de desenvolvimento:
+
+➡️ [DEVELOPMENT.md](./DEVELOPMENT.md)
+
+Esse documento explica:
+- Instalação do ambiente (Anaconda, VS Code, MiKTeX, Quarto).  
+- Estrutura de arquivos do repositório.  
+- Comandos para renderizar os notebooks em diferentes formatos.  
+- Orientações básicas de Git/GitHub.  
+
+
+---
+
 ---
 
 <p align="center">
