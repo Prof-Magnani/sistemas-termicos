@@ -57,14 +57,15 @@ Ao final, o(a) estudante deverá ser capaz de:
 
 ## Notas de Estudos
 
-- **Revisão de Perda de Carga**  
-  📓 [Colab](https://colab.research.google.com/github/Prof-Magnani/sistemas-termicos/blob/main/notebooks/ne-revisao-perda-carga.ipynb) · 🌐 [HTML](./html/ne-revisao-perda-carga.html) · 📑 [PDF](./pdf/ne-revisao-perda-carga.pdf) · 🎞️ [Slides](./revealjs/ne-revisao-perda-carga-slides.html) · 📊 [PPTX](./pptx/ne-revisao-perda-carga.pptx)
-
-- **Revisão de Newton-Raphson**  
+- **Revisão de Ciclo Regenerativo** (Otimização a Uma Variável - Método de Brent)    
+📓 [Colab](https://colab.research.google.com/github/Prof-Magnani/sistemas-termicos/blob/main/notebooks/ne-revisao-ciclo-regenerativo.ipynb)  
+- **Revisão de Perda de Carga** (Raiz de Função)     
+  📓 [Colab](https://colab.research.google.com/github/Prof-Magnani/sistemas-termicos/blob/main/notebooks/ne-revisao-perda-carga.ipynb) · 🌐 [HTML](./html/ne-revisao-perda-carga.html) · 📑 [PDF](./pdf/ne-revisao-perda-carga.pdf)
+- **Revisão de Trocador de Calor com Condensação** (Newton-Raphson)  
   📓 [Colab](https://colab.research.google.com/github/Prof-Magnani/sistemas-termicos/blob/main/notebooks/ne-revisao-newton-raphson.ipynb) · 🌐 [HTML](./html/ne-revisao-newton-raphson.html) · 📑 [PDF](./pdf/ne-revisao-newton-raphson.pdf) · 🎞️ [Slides](./revealjs/ne-revisao-newton-raphson-slides.html) · 📊 [PPTX](./pptx/ne-revisao-newton-raphson.pptx)
 
 - **Revisão de Trocadores de Calor**  
-  📓 [Colab](https://colab.research.google.com/github/Prof-Magnani/sistemas-termicos/blob/main/notebooks/ne-revisao-trocador-calor.ipynb) · 🌐 [HTML](./html/ne-revisao-trocador-calor.html) · 📑 [PDF](./pdf/ne-revisao-trocador-calor.pdf) · 🎞️ [Slides](./revealjs/ne-revisao-trocador-calor-slides.html) · 📊 [PPTX](./pptx/ne-revisao-trocador-calor.pptx)
+🚧 Em construção
 
 
  ### Sobre os formatos disponíveis
