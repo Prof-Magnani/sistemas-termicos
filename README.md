@@ -63,12 +63,14 @@ Ao final, o(a) estudante deverá ser capaz de:
   📓 [Colab](https://colab.research.google.com/github/Prof-Magnani/sistemas-termicos/blob/main/notebooks/ne-revisao-perda-carga.ipynb) · 🌐 [HTML](./html/ne-revisao-perda-carga.html) · 📑 [PDF](./pdf/ne-revisao-perda-carga.pdf)
 - **Revisão de Trocador de Calor com Condensação** (Newton-Raphson)  
   📓 [Colab](https://colab.research.google.com/github/Prof-Magnani/sistemas-termicos/blob/main/notebooks/ne-revisao-trocador-condensacao.ipynb) · 🌐 [HTML](./html/ne-revisao-newton-raphson.html) · 📑 [PDF](./pdf/ne-revisao-newton-raphson.pdf) · 🎞️ [Slides](./revealjs/ne-revisao-newton-raphson-slides.html) · 📊 [PPTX](./pptx/ne-revisao-newton-raphson.pptx)
-  - **Planta de Produçção de Hélio Líquido** (Newton-Raphson a Várias Variáveis)    
-📓 [Colab](https://colab.research.google.com/github/Prof-Magnani/sistemas-termicos/blob/main/notebooks/ne-planta-helio.ipynb)  
+
 
 - **Revisão de Trocadores de Calor**  
 🚧 Em construção
 
+
+- **Planta de Produção de Hélio Líquido** (Newton-Raphson a Várias Variáveis)    
+📓 [Colab](https://colab.research.google.com/github/Prof-Magnani/sistemas-termicos/blob/main/notebooks/ne-planta-helio.ipynb)  
 
  ### Sobre os formatos disponíveis
 
