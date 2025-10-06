@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.33">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Nota de Estudo — Compressão em Dois Estágios com Intecooler (Solução de Sistema Não-Linear)</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="ne-compressao-dois-estagios-intercooler_files/libs/clipboard/clipboard.min.js"></script>
+<script src="ne-compressao-dois-estagios-intercooler_files/libs/quarto-html/quarto.js" type="module"></script>
+<script src="ne-compressao-dois-estagios-intercooler_files/libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="ne-compressao-dois-estagios-intercooler_files/libs/quarto-html/popper.min.js"></script>
+<script src="ne-compressao-dois-estagios-intercooler_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="ne-compressao-dois-estagios-intercooler_files/libs/quarto-html/anchor.min.js"></script>
+<link href="ne-compressao-dois-estagios-intercooler_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="ne-compressao-dois-estagios-intercooler_files/libs/quarto-html/quarto-syntax-highlighting-ea385d0e468b0dd5ea5bf0780b1290d9.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="ne-compressao-dois-estagios-intercooler_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="ne-compressao-dois-estagios-intercooler_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="ne-compressao-dois-estagios-intercooler_files/libs/bootstrap/bootstrap-bb462d781dde1847d9e3ccf7736099dd.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="quarto-light">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+<div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="..\..\ne-compressao-dois-estagios-intercooler.html"><i class="bi bi-file-pdf"></i>PDF</a></li><li><a href="..\ne-compressao-dois-estagios-intercooler.html"><i class="bi bi-file-slides"></i>RevealJS</a></li></ul></div></div>
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Nota de Estudo — Compressão em Dois Estágios com <em>Intecooler</em> (Solução de Sistema Não-Linear)</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="nota-de-estudo-compressão-em-dois-estágios-com-intecooler-solução-de-sistema-não-linear" class="level1">
+<h1>Nota de Estudo — Compressão em Dois Estágios com <em>Intecooler</em> (Solução de Sistema Não-Linear)</h1>
+<blockquote class="blockquote">
+<p><strong>Autor:</strong> Fábio Magnani (fabio.magnani@ufpe.br)<br>
+<strong>Curso:</strong> Engenharia Mecânica - UFPE<br>
+<strong>Início do desenvolvimento:</strong> 29/09/2025<br>
+<strong>Primeira publicação:</strong> 06/10/2025<br>
+<strong>Versão Atual:</strong> v-2025-10-06-a (fase de teste técnico no Colab, teste didático-pedagógico com estudantes e início da revisão final de código/texto)</p>
+</blockquote>
+<hr>
+<section id="objetivo" class="level2">
+<h2 class="anchored" data-anchor-id="objetivo">Objetivo</h2>
+<p>Fazer a modelagem matemática e obter a solução de um processo de compressão em dois estágios com <em>intercooler</em>, Prob. 6-15 do Stoecker.</p>
+</section>
+<section id="referência" class="level2">
+<h2 class="anchored" data-anchor-id="referência">Referência</h2>
+<ul>
+<li>Stoecker, W. F. <em>Design of Thermal Systems</em>, chap.&nbsp;6, 3rd ed., McGraw-Hill, 1989.</li>
+</ul>
+</section>
+<section id="estrutura" class="level2">
+<h2 class="anchored" data-anchor-id="estrutura">Estrutura</h2>
+<ul>
+<li>Introdução</li>
+<li>Modelo matemático</li>
+<li>Solução</li>
+<li>Estudo paramétrico (trabalhos futuros)</li>
+<li>Propriedades termodinâmicas reais (trabalhos futuros)</li>
+<li>Redução do número de equações (trabalhos futuros)</li>
+<li>Conclusão</li>
+</ul>
+</section>
+<section id="notação" class="level2">
+<h2 class="anchored" data-anchor-id="notação">Notação</h2>
+<p>(em construção)</p>
+</section>
+<section id="parâmetros" class="level2">
+<h2 class="anchored" data-anchor-id="parâmetros">Parâmetros</h2>
+<p>(em construção)</p>
+</section>
+<section id="hipóteses-simplificativas" class="level2">
+<h2 class="anchored" data-anchor-id="hipóteses-simplificativas">Hipóteses simplificativas</h2>
+<ul>
+<li>Regime permanente<br>
+</li>
+<li>Gás perfeito e líquido incompressível com calor específico constante<br>
+</li>
+<li>Equação do trocador na forma exponencial modificada</li>
+</ul>
+</section>
+<section id="revisão" class="level2">
+<h2 class="anchored" data-anchor-id="revisão">Revisão</h2>
+<p>Em geral, temos à disposição três tipos de equação para usar:<br>
+- Leis de conservação (<em>e.g.,</em>: conservação da massa, conservação da energia)<br>
+- Relações entre as propriedades termodinâmicas<br>
+- Características dos equipamentos (<em>e.g.</em>, eficiência conhecida, alguma propriedade constante)</p>
+<figure style="margin: 0 0 1.25rem 0; text-align:center;" class="figure">
+<img src="../figures/ne-compressao-dois-estagios-intercooler-fig-01.png" alt="" width="600" style="display:block; margin:0 auto; max-width:100%;" class="figure-img">
+<figcaption>
+<b>Figura 1. Compressão de ar em dois estágios com resfriamento intermediário (<em>intercooler</em>).</b> (Prob. 6-15 do Stoecker).
+</figcaption>
+</figure>
+</section>
+<section id="enunciado-do-problema" class="level2">
+<h2 class="anchored" data-anchor-id="enunciado-do-problema">Enunciado do Problema</h2>
+<p>Um compressor de dois estágios com <em>intercooler</em> (Fig.01, Prob 6-15 do Stoecker) comprime ar seco de 100 kPa absolutos para 1200 kPa absolutos. Os seguintes dados valem para os componentes:</p>
+<ul>
+<li><p><strong>Taxa de deslocamento volumétrico (vazão teórica)</strong><br>
+– Estágio baixo: 0.2 m³/s<br>
+– Estágio alto: 0.05 m³/s</p></li>
+<li><p><strong>Eficiência volumétrica</strong> (para cada compressor): <span class="math inline">\(\eta_v = (\dot V_{\text{real}}/\dot V_{\text{desl}})\)</span>, onde <span class="math inline">\(\dot V_{\text{real}}\)</span> é a vazão volumétrica medida na sucção e <span class="math inline">\(\dot V_{\text{desl}}\)</span> é a taxa de deslocamento volumétrico (vazão teórica).</p></li>
+<li><p><strong>Para ambos os compressores</strong>, a eficiência é: <span class="math inline">\(\eta = 1,04 - 0,04\,\left(p_{\text{desc}}/p_{\text{suc}}\right)^{1.4}\)</span>.</p></li>
+<li><p><strong>Expoente politrópico</strong>: O compressor de baixa pressão respeita a equação <span class="math inline">\(p_1\,v_1^{n} = p_2\,v_2^{n}\)</span>, com <span class="math inline">\(n =  1.2\)</span></p></li>
+<li><p><strong>Intercooler</strong>: trocador de calor de contra-corrente, recebendo água a 22°C com vazão de 0,09 kg/s; o coeficiente do trocador de calor é <span class="math inline">\(UA = 0.3\ \text{kW/K}\)</span>.</p></li>
+<li><p><strong>Hipótese</strong>: o ar comporta-se como gás perfeito com <span class="math inline">\(c_{p0}\)</span> constante, a água comporta-se como líquido incompressível com <span class="math inline">\(c\)</span> constante, e o trocador de calor é isobárico.</p></li>
+</ul>
+</section>
+<section id="objetivo-1" class="level2">
+<h2 class="anchored" data-anchor-id="objetivo-1">Objetivo</h2>
+<p>Determinar as grandezas do sistema (por exemplo <span class="math inline">\(w\)</span>, <span class="math inline">\(p_i\)</span>, <span class="math inline">\(T_2\)</span>, <span class="math inline">\(T_3\)</span>) de acordo com os dados acima.</p>
+</section>
+<section id="parâmetros-1" class="level2">
+<h2 class="anchored" data-anchor-id="parâmetros-1">Parâmetros</h2>
+<p><span class="math inline">\(\dot V_{D,\text{baixa}}=0,20\ \text{m}^3/\text{s}\)</span><br>
+<span class="math inline">\(\dot V_{D,\text{alta}}=0,05\ \text{m}^3/\text{s}\)</span><br>
+<span class="math inline">\(n_{\text{baixa}}=1{,}2\)</span><br>
+<span class="math inline">\(UA=0,3\ \text{kW/K}\)</span><br>
+<span class="math inline">\(p_1=100\ \text{kPa}\)</span><br>
+<span class="math inline">\(T_1=26^\circ\text{C}\)</span><br>
+<span class="math inline">\(p_4=1200\ \text{kPa}\)</span><br>
+<span class="math inline">\(w_w=0,09\ \text{kg/s}\)</span><br>
+<span class="math inline">\(T_{w,e}=22^ \circ\text{C}\)</span><br>
+<span class="math inline">\(R=0,286\ \text{kJ/kg} \cdot \text{K}\)</span><br>
+<span class="math inline">\(c_{p,a}=1,0\ \text{kJ/kg} \cdot \text{K}\)</span><br>
+<span class="math inline">\(c_{w}=4,22\ \text{kJ/kg} \cdot \text{K}\)</span></p>
+<hr>
+</section>
+<section id="incógnitas" class="level2">
+<h2 class="anchored" data-anchor-id="incógnitas">Incógnitas</h2>
+<ul>
+<li><span class="math inline">\(w,\ \dot Q\)</span><br>
+</li>
+<li><span class="math inline">\(v_1,\ v_2,\ v_3\)</span><br>
+</li>
+<li><span class="math inline">\(p_i\)</span><br>
+</li>
+<li><span class="math inline">\(T_2,\ T_3,\ T_{w,o}\)</span></li>
+</ul>
+<hr>
+</section>
+<section id="equações" class="level2">
+<h2 class="anchored" data-anchor-id="equações">Equações</h2>
+<ol type="1">
+<li>(Eficiência vol.&nbsp;comp. baixa) <span class="math inline">\(w=\dfrac{V_{D,\text{baixa}}}{v_1}\,\Big[1,04-0,04 \left( \frac{p_i}{p_1} \right) ^{1,4}\Big]\)</span></li>
+<li>(Gás perfeito) <span class="math inline">\(p_1\,v_1=R\,T_1\)</span></li>
+<li>(Equação do compressor de baixa) <span class="math inline">\(p_1\,v_1^{n_{\text{baixa}}}=p_i\,v_2^{n_{\text{baixa}}}\)</span></li>
+<li>(Gás perfeito) <span class="math inline">\(p_i\,v_2=R\,T_2\)</span></li>
+<li>(1ª lei, lado quente do trocador, ar) <span class="math inline">\(\dot Q=w c_{p,a}\,(T_2-T_3)\)</span></li>
+<li>(1ª lei, lado frio do trocador, água) <span class="math inline">\(\dot Q=w_w c_{w}\,(T_{w,s}-T_{w,e})\)</span></li>
+<li>(Equação do trocador, LMTD) <span class="math inline">\((T_{2}-T_{w,s}) =  (T_{3}-T_{w,e}) \exp \left[ \frac{(T_{2}-T_{w,s})-(T_{3}-T_{w,e})}{Q/UA} \right]\)</span></li>
+<li>(Eficiência vol.&nbsp;comp. baixa) <span class="math inline">\(w=\dfrac{V_{D,\text{alta}}}{v_3}\,\Big[1,04-0,04 \left( \frac{p_4}{p_i} \right) ^{1,4}\Big]\)</span></li>
+<li>(Gás perfeito) <span class="math inline">\(p_i\,v_3=R\,T_3\)</span></li>
+</ol>
+<hr>
+<p><strong>Observação</strong></p>
+<p>Para eliminar problemas de logarítmo de número negativo e divisão por zero na equação tradicional do trocador, na 7a equação do sistema, trocamos a forma<br>
+<span class="math display">\[
+\dot Q = UA \frac{(T_{qe}-T_{fs})-(T_{qs}-T_{fe})}{\ln(\frac{(T_{qe}-T_{fs})}{(T_{qs}-T_{fe})})}
+\]</span> por <span class="math display">\[
+(T_{qe}-T_{fs}) =  (T_{qs}-T_{fe}) \exp \left[ \frac{(T_{qe}-T_{fs})-(T_{qs}-T_{fe})}{\dot Q/UA} \right]
+\]</span></p>
+<div id="d0ee177b-2125-46ea-8623-636426ddac28" class="cell" data-execution_count="32">
+<div class="cell-output cell-output-stdout">
+<pre><code>status = 1 | `gtol` termination condition is satisfied.
+nfev = 205 | ||res||_2 = 1.4862197190246538e-14
+x*_box = [1.80770093e-01 1.04685662e+01 8.55569000e-01 2.76571292e-01
+ 2.33855435e-01 3.87737254e+02 3.74954522e+02 3.17043581e+02
+ 3.22713365e+02]
+res_box = [-5.55111512e-17  0.00000000e+00 -1.42108547e-14  0.00000000e+00
+  1.77635684e-15  1.77635684e-15  3.55271368e-15 -2.77555756e-17
+  0.00000000e+00]</code></pre>
+</div>
+</div>
+</section>
+<section id="discussão-dos-resultados" class="level2">
+<h2 class="anchored" data-anchor-id="discussão-dos-resultados">Discussão dos Resultados</h2>
+<p><strong>Condições resolvidas (SI):</strong> - Vazão mássica de ar <code>w</code> ≈ <strong>0,1808 kg/s</strong> - Calor removido no intercooler <code>Q</code> ≈ <strong>10,47 kW</strong> - Pressão intermediária <code>p_i</code> ≈ <strong>388 kPa</strong> - Temperaturas do ar:<br>
+<code>T2</code> ≈ <strong>375 K</strong> (≈ 102 °C), <code>T3</code> ≈ <strong>317 K</strong> (≈ 44 °C)<br>
+- Água: <code>Tw_e</code> = <strong>295,15 K</strong> (22 °C), <code>Tw_s</code> ≈ <strong>322,7 K</strong> (≈ 49,6 °C) - Volumes específicos: <code>v1</code> ≈ <strong>0,8556 m³/kg</strong>, <code>v2</code> ≈ <strong>0,2766 m³/kg</strong>, <code>v3</code> ≈ <strong>0,2339 m³/kg</strong></p>
+<p><strong>Checks de consistência (todas atendidas a ~1e−14):</strong> - Estado (gás ideal): <code>p1 v1 = R T1</code>, <code>p_i v2 = R T2</code>, <code>p_i v3 = R T3</code> - Balanço de energia do ar: <code>Q = w · c_p (T2 − T3)</code> → <strong>10,47 kW</strong> - Balanço no lado da água: <code>Q = w_w c_w (Tw_s − Tw_e)</code> → <strong>10,47 kW</strong> - LMTD: ΔT₁ = <code>T2 − Tw_s</code> ≈ <strong>52,24 K</strong>, ΔT₂ = <code>T3 − Tw_e</code> ≈ <strong>21,89 K</strong><br>
+<code>ΔT_lm = (ΔT₁ − ΔT₂)/ln(ΔT₁/ΔT₂)</code> ≈ <strong>34,90 K</strong><br>
+<code>UA·ΔT_lm</code> = <strong>0,3 × 34,90 ≈ 10,47 kW = Q</strong> - Vazões volumétricas (com eficiência volumétrica empírica):<br>
+η_v,1 = <code>1,04 − 0,04 (p_i/p1)^1,4</code> ≈ <strong>0,773</strong><br>
+η_v,2 = <code>1,04 − 0,04 (p4/p_i)^1,4</code> ≈ <strong>0,845</strong><br>
+<code>w = (Vd_baixa/v1) η_v,1 = (Vd_alta/v3) η_v,2</code> → <strong>0,1808 kg/s</strong> em ambos os estágios</p>
+<p><strong>Interpretação física:</strong> - <strong>p_i acima da média geométrica.</strong> A média geométrica <code>√(p1 p4)</code> ≈ <strong>346 kPa</strong>. O resultado <strong>388 kPa</strong> desloca a razão para cima porque os deslocamentos são <strong>diferentes</strong> (<code>Vd_baixa = 0,20</code> vs <code>Vd_alta = 0,05 m³/s</code>). Para compatibilizar as vazões, o modelo eleva <code>p_i</code> (aumenta a densidade na sucção do 2º estágio), o que reduz <code>v3</code> e permite que o compressor de <strong>menor deslocamento</strong> entregue a mesma <code>w</code>. - <strong>Intercooler efetivo, mas limitado por UA.</strong><br>
+Capacidades térmicas:<br>
+lado quente <code>C_hot = w c_p ≈ 0,181 kW/K</code>, lado frio <code>C_cold = w_w c_w ≈ 0,380 kW/K</code>.<br>
+Assim, <code>C_min = C_hot</code> e <code>NTU = UA/C_min ≈ 1,66</code>, <code>C_r = C_min/C_max ≈ 0,476</code>.<br>
+<strong>Efetividade</strong> <code>ε = Q / (C_min (T2 − Tw_e)) ≈ 0,726</code>.<br>
+Isso explica por que <code>T3</code> (≈ 44 °C) <strong>não</strong> cai até <code>Tw_e</code> (22 °C): o limite é o produto <code>UA</code>. - <strong>Temperaturas e aproximações:</strong><br>
+Aproximação no frio (pinch frio) <code>T3 − Tw_e</code> ≈ <strong>21,9 K</strong>; no quente <code>T2 − Tw_s</code> ≈ <strong>52,2 K</strong>. Estes valores são coerentes com <code>NTU</code> moderado.</p>
+<p><strong>Leituras úteis dos resultados:</strong> - Aumentar <strong>UA</strong> ou <strong>w_w</strong> (mantendo <code>UA</code> efetivo maior) reduziria <code>T3</code> e <code>Tw_s</code>, elevando <code>Q</code>. - Se os deslocamentos fossem iguais, <code>p_i</code> tenderia à <strong>média geométrica</strong>; com deslocamentos distintos, o <code>p_i</code> ótimo se desloca para <strong>balancear vazões</strong>. - As curvas de eficiência volumétrica penalizam razões de compressão elevadas; isso também empurra <code>p_i</code> para um valor que equalize <code>w</code> em ambos os estágios.</p>
+<p><strong>Conclusão:</strong><br>
+O conjunto está <strong>fechado e fisicamente consistente</strong>: estados ideais satisfeitos, balanços de energia nos dois lados, LMTD igualando <code>UA·ΔT_lm</code> a <code>Q</code> e compatibilidade de vazões via deslocamentos e eficiências volumétricas. O intercooler é razoavelmente eficaz (ε ≈ 0,73), mas <code>UA</code> limita a aproximação à temperatura de entrada da água.</p>
+<section id="trabalhos-futuros" class="level3">
+<h3 class="anchored" data-anchor-id="trabalhos-futuros">Trabalhos Futuros</h3>
+<ol type="1">
+<li><strong>Estudo paramétrico</strong>
+<ul>
+<li>Variar parâmetros de projeto para compreender sensibilidade e desempenho do sistema:
+<ul>
+<li>UA (efetividade térmica do intercooler)</li>
+<li>Vazões volumétricas e razões de deslocamento (Vd_baixa, Vd_alta)</li>
+<li>Vazões mássicas de ar e água (w, w_w)</li>
+<li>Expoente politrópico e pressões intermediárias</li>
+</ul></li>
+<li>Automatizar a geração de gráficos (T2, T3, Q, p_i) em função desses parâmetros.</li>
+</ul></li>
+<li><strong>Propriedades termodinâmicas reais</strong>
+<ul>
+<li>Substituir o gás ideal pelo <strong>ar real</strong> via <strong>CoolProp</strong> (funções <code>PropsSI</code>).</li>
+<li>Incluir correções de <code>cp(T)</code>, viscosidade e densidade em função da temperatura.</li>
+<li>Preparar versão compatível com <strong>Google Colab</strong>, incluindo:
+<ul>
+<li>Instalação automática do CoolProp (<code>!pip install CoolProp</code>)</li>
+<li>Verificação de versão e exemplo de uso rápido (<code>PropsSI('D','T',300,'P',1e5,'Air')</code>)</li>
+</ul></li>
+</ul></li>
+<li><strong>Redução do número de equações</strong>
+<ul>
+<li>Eliminar redundâncias:
+<ul>
+<li>Usar relações ideais para substituir variáveis intermediárias (<code>v = RT/p</code>).</li>
+<li>Integrar balanço de energia diretamente nas equações principais.</li>
+</ul></li>
+<li>Reduzir o sistema para <strong>5–6 incógnitas</strong> (w, Q, p_i, T2, T3, Tw_s) mantendo fechamento físico.</li>
+<li>Reescrever o modelo em forma vetorial compacta, com normalização das grandezas.</li>
+</ul></li>
+</ol>
+<hr>
+<p><strong>Objetivo:</strong> evoluir o modelo didático atual em direção a uma ferramenta paramétrica, realista e leve, pronta para uso interativo no <em>Colab</em> e integrada às futuras atividades do <em>EspiralLab</em>.</p>
+</section>
+</section>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
