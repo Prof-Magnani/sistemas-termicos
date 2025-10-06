@@ -71,6 +71,10 @@ Ao final, o(a) estudante deverá ser capaz de:
 
 - **Planta de Produção de Hélio Líquido** (Newton-Raphson a Várias Variáveis)    
 📓 [Colab](https://colab.research.google.com/github/Prof-Magnani/sistemas-termicos/blob/main/notebooks/ne-planta-helio.ipynb)  
+- **Compressão em Dois Estágios com** ***Intercooler*** (Newton-Raphson a Várias Variáveis)    
+📓 [Colab](https://colab.research.google.com/github/Prof-Magnani/sistemas-termicos/blob/main/notebooks/ne-compressao-dois-estagios-intercooler.ipynb) 🌐 [HTML](./html/ne-compressao-dois-estagios-intercooler.html) · 📑 [PDF](./pdf/ne-compressao-dois-estagios-intercooler.pdf) 
+
+
 
  ### Sobre os formatos disponíveis
 
